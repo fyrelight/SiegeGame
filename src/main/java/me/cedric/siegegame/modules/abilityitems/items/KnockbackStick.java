@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-public class QxtiStick implements AbilityItem {
+public class KnockbackStick implements AbilityItem {
 
     private NamespacedKey namespacedKey;
 
@@ -36,7 +36,7 @@ public class QxtiStick implements AbilityItem {
 
     @Override
     public String getDisplayName() {
-        return ChatColor.AQUA + "qxti stick";
+        return ChatColor.AQUA + "Knockback Stick";
     }
 
     @Override
@@ -46,6 +46,6 @@ public class QxtiStick implements AbilityItem {
 
     @Override
     public String getIdentifier() {
-        return "qxti-stick";
+        return "knockback-stick";
     }
 }

@@ -4,8 +4,8 @@ import me.cedric.siegegame.SiegeGamePlugin;
 import me.cedric.siegegame.enums.Messages;
 import me.cedric.siegegame.model.game.Module;
 import me.cedric.siegegame.model.game.WorldGame;
-import me.cedric.siegegame.modules.abilityitems.items.MortyAntiQuickie;
-import me.cedric.siegegame.modules.abilityitems.items.QxtiStick;
+import me.cedric.siegegame.modules.abilityitems.items.AntiQuickie;
+import me.cedric.siegegame.modules.abilityitems.items.KnockbackStick;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -47,8 +47,8 @@ public class AbilityItemModule implements Module {
     }
 
     private void registerAbilities() {
-        abilityItems.add(new MortyAntiQuickie());
-        abilityItems.add(new QxtiStick());
+        abilityItems.add(new AntiQuickie());
+        abilityItems.add(new KnockbackStick());
     }
 
     @Override

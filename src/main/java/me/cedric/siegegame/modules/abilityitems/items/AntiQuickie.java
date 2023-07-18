@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-public class MortyAntiQuickie implements AbilityItem {
+public class AntiQuickie implements AbilityItem {
 
     private NamespacedKey namespacedKey;
 
@@ -35,7 +35,7 @@ public class MortyAntiQuickie implements AbilityItem {
 
     @Override
     public String getDisplayName() {
-        return ChatColor.LIGHT_PURPLE + "Morty's Anti Quickdrop";
+        return ChatColor.LIGHT_PURPLE + "Anti Quickdrop";
     }
 
     @Override
@@ -45,6 +45,6 @@ public class MortyAntiQuickie implements AbilityItem {
 
     @Override
     public String getIdentifier() {
-        return "morty-antiquickie";
+        return "antiquickie";
     }
 }
