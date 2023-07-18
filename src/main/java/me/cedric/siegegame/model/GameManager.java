@@ -64,7 +64,7 @@ public final class GameManager {
         if (getCurrentMatch() != null) {
             endGame(false, true); // Do not unload now. We will unload later with no players
             wait = true;
-            Bukkit.broadcastMessage(ChatColor.DARK_AQUA + "Next game starting in 15 seconds!");
+            Bukkit.broadcastMessage(ChatColor.GOLD + "Next game starting in 15 seconds!");
         }
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -78,7 +78,7 @@ public final class GameManager {
             currentMatch = gameMatch;
             currentMatch.startGame();
 
-            Bukkit.broadcastMessage(ChatColor.DARK_AQUA + "Starting next game...");
+            Bukkit.broadcastMessage(ChatColor.GOLD + "Starting next game...");
 
             if (lastMatch == null)
                 return;

@@ -118,7 +118,7 @@ public class WorldGame {
 
         player.getBorderHandler().addBorder(plugin.getGameManager().getCurrentMatch().getGameMap().getMapBorder());
 
-        player.getBukkitPlayer().sendMessage(ChatColor.DARK_AQUA + "You have been assigned to the following team: " + team.getName());
+        player.getBukkitPlayer().sendMessage(ChatColor.GOLD + "You have been assigned to the following team: " + team.getName());
     }
 
     public void updateAllScoreboards() {
