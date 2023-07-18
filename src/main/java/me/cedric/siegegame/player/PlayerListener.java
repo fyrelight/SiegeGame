@@ -49,7 +49,7 @@ public class PlayerListener implements Listener {
         player.setFlying(false);
         player.setAllowFlight(false);
         player.setLevel(0);
-        player.sendMessage(ChatColor.DARK_AQUA + "Welcome to ceedric.com Use " + ChatColor.GOLD + "/resources" + ChatColor.DARK_AQUA + " for gear.");
+        player.sendMessage(ChatColor.GOLD + "Welcome to fyrelight.uk! Use " + ChatColor.YELLOW + "/resources" + ChatColor.GOLD + " for gear.");
 
         String currentMap = match == null ? null : match.getWorldGame().getMapIdentifier();
         plugin.getGameManager().getKitStorage().load(player, currentMap);

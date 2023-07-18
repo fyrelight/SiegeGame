@@ -59,10 +59,10 @@ public class Displayer {
         lines.add("");
         lines.add(ChatColor.GOLD + "Map: " + ChatColor.GRAY + match.getGameMap().getDisplayName());
         lines.add("");
-        lines.add(ChatColor.YELLOW + "ceedric.com");
+        lines.add(ChatColor.YELLOW + "fyrelight.uk");
 
         EScoreboard scoreboard = apiPlayer.getScoreboard() == null ? apiPlayer.setScoreboard(apiPlayer.getUniqueID().toString(), lines.size()) : apiPlayer.getScoreboard();
-        scoreboard.setTitle(ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "Sieges");
+        scoreboard.setTitle(ChatColor.GOLD + "" + ChatColor.BOLD + "Sieges");
 
         int i = 0;
         for (String line : lines) {
