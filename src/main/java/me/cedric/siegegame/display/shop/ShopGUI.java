@@ -5,6 +5,7 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import me.cedric.siegegame.model.game.WorldGame;
 import me.cedric.siegegame.player.GamePlayer;
+import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -27,8 +28,14 @@ public class ShopGUI {
         shopItems.add(button);
         this.pane.addItem(new GuiItem(button.getDisplayItem(), inventoryClickEvent -> {
             GamePlayer gamePlayer = worldGame.getPlayer(inventoryClickEvent.getWhoClicked().getUniqueId());
-            if (gamePlayer != null)
-                button.handlePurchase(gamePlayer);
+            if (gamePlayer != null) {
+                Sound sound;
+                if (button.handlePurchase(gamePlayer))
+                    sound = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+                else
+                    sound = Sound.ENTITY_VILLAGER_NO;
+                gamePlayer.getBukkitPlayer().playSound(gamePlayer.getBukkitPlayer().getLocation(), sound, 1, 1);
+            }
             inventoryClickEvent.setCancelled(true);
         }), button.getSlot() % 9, button.getSlot() / 9);
     }

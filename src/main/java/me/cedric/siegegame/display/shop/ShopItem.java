@@ -8,12 +8,14 @@ public class ShopItem implements Buyable {
     private final int price;
     private final int slot;
     private final ItemStack displayItem;
+    private final boolean includesItem;
     private final boolean includesNBT;
 
-    public ShopItem(Purchase purchase, ItemStack displayItem, int price, int slot, boolean includesNBT) {
+    public ShopItem(Purchase purchase, ItemStack displayItem, int price, int slot, boolean includesItem, boolean includesNBT) {
         this.purchase = purchase;
         this.price = price;
         this.slot = slot;
+        this.includesItem = includesItem;
         this.includesNBT = includesNBT;
         this.displayItem = displayItem;
     }
@@ -26,6 +28,11 @@ public class ShopItem implements Buyable {
     @Override
     public Purchase getPurchase() {
         return purchase;
+    }
+
+    @Override
+    public boolean includesItem() {
+        return includesItem;
     }
 
     public int getPrice() {
