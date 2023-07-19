@@ -2,11 +2,26 @@ package me.cedric.siegegame.display;
 
 import me.cedric.siegegame.model.game.WorldGame;
 import me.cedric.siegegame.model.teams.Team;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 
 
 public class ColorUtil {
+
+    @Deprecated
+    public static String getChatColor(TextColor color) {
+        try {
+            if (color instanceof NamedTextColor named) {
+                return ChatColor.of(named.toString()).toString();
+            }
+            return ChatColor.of(color.asHexString()).toString();
+        } catch (IllegalArgumentException e) {
+            return ChatColor.WHITE.toString();
+        }
+    }
 
     public static TeamColor getRelationalColor(Team one, Team two) {
         if (one == null || two == null)
