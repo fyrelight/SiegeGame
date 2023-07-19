@@ -28,7 +28,6 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -269,12 +268,7 @@ public class ConfigLoader implements GameConfig {
             nbtItem.mergeCompound(compound);
 
             ShopItem button = new ShopItem(gamePlayer -> {
-                Player player = gamePlayer.getBukkitPlayer();
                 if (includesItem) {
-                    if (player.getInventory().firstEmpty() == -1) {
-                        player.sendMessage(ChatColor.RED + "You do not have any empty inventory slots");
-                    }
-
                     if (includesItemExact)
                         gamePlayer.getBukkitPlayer().getInventory().addItem(nbtItem.getItem().clone());
                     else
@@ -284,7 +278,7 @@ public class ConfigLoader implements GameConfig {
                 for (String command : commands) {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
                 }
-            }, nbtItem.getItem().clone(), price, slot, includesItemExact);
+            }, nbtItem.getItem().clone(), price, slot, includesItem, includesItemExact);
 
             shopItems.add(button);
         }

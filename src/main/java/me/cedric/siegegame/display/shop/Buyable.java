@@ -15,6 +15,8 @@ public interface Buyable {
 
     int getPrice();
 
+    boolean includesItem();
+
     default boolean handlePurchase(GamePlayer gamePlayer) {
         Player player = gamePlayer.getBukkitPlayer();
 
@@ -40,6 +42,12 @@ public interface Buyable {
 
         if (player.getLevel() < getPrice()) {
             player.sendMessage(ChatColor.RED + "You do not have enough levels to buy this");
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return false;
+        }
+
+        if (player.getInventory().firstEmpty() == -1) {
+            player.sendMessage(ChatColor.RED + "You do not have any empty inventory slots");
             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return false;
         }
