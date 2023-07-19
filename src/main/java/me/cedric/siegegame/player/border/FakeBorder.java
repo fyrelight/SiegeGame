@@ -1,5 +1,7 @@
 package me.cedric.siegegame.player.border;
 
+import org.bukkit.Material;
+
 public interface FakeBorder {
     void update();
     void destroy();
@@ -41,19 +43,25 @@ public interface FakeBorder {
         }
     }
 
-    final class Floor {
+    final class Box {
         final int minX;
         final int maxX;
         final int minZ;
         final int maxZ;
-        final int y;
+        final int minY;
+        final int maxY;
+        final Material floor;
+        final Material ceiling;
 
-        Floor(int minX, int maxX, int minZ, int maxZ, int y) {
+        Box(int minX, int maxX, int minZ, int maxZ, int minY, int maxY, Material floor, Material ceiling) {
             this.minX = minX;
             this.maxX = maxX;
             this.minZ = minZ;
             this.maxZ = maxZ;
-            this.y = y;
+            this.minY = minY;
+            this.maxY = maxY;
+            this.floor = floor;
+            this.ceiling = ceiling;
         }
 
         public int getMinX() {
@@ -72,8 +80,20 @@ public interface FakeBorder {
             return maxZ;
         }
 
-        public int getY() {
-            return y;
+        public int getMinY() {
+            return minY;
+        }
+
+        public int getMaxY() {
+            return maxY;
+        }
+
+        public Material getFloor() {
+            return floor;
+        }
+
+        public Material getCeiling() {
+            return ceiling;
         }
     }
 
