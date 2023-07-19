@@ -6,7 +6,7 @@ import org.bukkit.Material;
 
 public interface TeamColor {
     TextColor getTextColor();
-    Material getHardBlock();
+    Material getSolidBlock();
     Material getSoftBlock();
     Material getTransparentBlock();
     default String getMinimessage() {
