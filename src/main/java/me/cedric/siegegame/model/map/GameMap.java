@@ -4,6 +4,7 @@ import me.cedric.siegegame.player.border.Border;
 import me.cedric.siegegame.util.BoundingBox;
 import me.cedric.siegegame.model.teams.TeamFactory;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 
 import java.util.Set;
@@ -14,14 +15,16 @@ public class GameMap {
     private final Set<TeamFactory> teamFactories;
     private final String displayName;
     private Border mapBorder;
+    private final Material borderMaterial;
     private final Location defaultSpawn;
 
-    public GameMap(FileMapLoader fileMapLoader, String displayName, Set<TeamFactory> teamFactory, Border border, Location defaultSpawn) {
+    public GameMap(FileMapLoader fileMapLoader, String displayName, Set<TeamFactory> teamFactory, Border border, Location defaultSpawn, Material borderMaterial) {
         this.fileMapLoader = fileMapLoader;
         this.teamFactories = teamFactory;
         this.displayName = displayName;
         this.mapBorder = border;
         this.defaultSpawn = defaultSpawn;
+        this.borderMaterial = borderMaterial;
     }
 
     public TeamFactory getTeam(String configKey) {
@@ -30,6 +33,10 @@ public class GameMap {
 
     public Border getMapBorder() {
         return mapBorder;
+    }
+
+    public Material getBorderMaterial() {
+        return borderMaterial;
     }
 
     public Location getDefaultSpawn() {

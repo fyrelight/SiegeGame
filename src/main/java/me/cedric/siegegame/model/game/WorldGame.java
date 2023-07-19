@@ -8,6 +8,7 @@ import me.cedric.siegegame.display.ColorUtil;
 import me.cedric.siegegame.display.TeamColor;
 import me.cedric.siegegame.model.game.death.DeathManager;
 import me.cedric.siegegame.display.shop.ShopGUI;
+import me.cedric.siegegame.model.map.GameMap;
 import me.cedric.siegegame.modules.abilityitems.SuperBreakerModule;
 import me.cedric.siegegame.modules.lunarclient.LunarClientModule;
 import me.cedric.siegegame.modules.stats.StatsModule;
@@ -121,7 +122,9 @@ public class WorldGame {
             player.getBorderHandler().addBorder(t.getSafeArea(), color.getTransparentBlock());
         }
 
-        player.getBorderHandler().addBorder(plugin.getGameManager().getCurrentMatch().getGameMap().getMapBorder(), Material.PURPLE_STAINED_GLASS);
+        GameMap map = plugin.getGameManager().getCurrentMatch().getGameMap();
+
+        player.getBorderHandler().addBorder(map.getMapBorder(), map.getBorderMaterial());
 
         player.getBukkitPlayer().sendMessage(ChatColor.DARK_AQUA + "You have been assigned to the following team: " + team.getName());
     }

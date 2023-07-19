@@ -56,6 +56,7 @@ public class ConfigLoader implements GameConfig {
     private static final String MAPS_SECTION_DEFAULT_SPAWN_Y = "y";
     private static final String MAPS_SECTION_DEFAULT_SPAWN_Z = "z";
     private static final String MAPS_SECTION_MAP_MAPBORDER_KEY = "worldborder";
+    private static final String MAPS_SECTION_MAP_MAPBORDER_MATERIAL_KEY = "material";
     private static final String MAPS_SECTION_MAP_MAPBORDER_X1_KEY = "x1";
     private static final String MAPS_SECTION_MAP_MAPBORDER_Y1_KEY = "y1";
     private static final String MAPS_SECTION_MAP_MAPBORDER_Z1_KEY = "z1";
@@ -166,6 +167,7 @@ public class ConfigLoader implements GameConfig {
         Location defaultSpawn = new Location(null, x, y, z);
 
         ConfigSection worldBorderSection = section.getConfigurationSection(MAPS_SECTION_MAP_MAPBORDER_KEY);
+        String materialName = worldBorderSection.getString(MAPS_SECTION_MAP_MAPBORDER_MATERIAL_KEY);
         int x1 = worldBorderSection.getInt(MAPS_SECTION_MAP_MAPBORDER_X1_KEY);
         int y1 = worldBorderSection.getInt(MAPS_SECTION_MAP_MAPBORDER_Y1_KEY);
         int z1 = worldBorderSection.getInt(MAPS_SECTION_MAP_MAPBORDER_Z1_KEY);
@@ -184,7 +186,11 @@ public class ConfigLoader implements GameConfig {
         border.setCanLeave(false);
         border.setAllowBlockChanges(false);
         border.setInverse(false);
-        GameMap gameMap = new GameMap(fileMapLoader, displayName, new HashSet<>(), border, defaultSpawn);
+
+        Material material = Material.matchMaterial(materialName);
+        if (material == null || !material.isBlock()) material = Material.RED_STAINED_GLASS;
+
+        GameMap gameMap = new GameMap(fileMapLoader, displayName, new HashSet<>(), border, defaultSpawn, material);
         WorldGame worldGame = new WorldGame(plugin, mapID);
 
         ConfigSection teamsSection = section.getConfigurationSection(MAPS_SECTION_WORLD_TEAMS_KEY);
