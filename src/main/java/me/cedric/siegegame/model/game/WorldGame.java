@@ -4,6 +4,8 @@ import com.github.sirblobman.combatlogx.api.manager.ICombatManager;
 import com.github.sirblobman.combatlogx.api.object.UntagReason;
 import com.google.common.collect.ImmutableSet;
 import me.cedric.siegegame.SiegeGamePlugin;
+import me.cedric.siegegame.display.ColorUtil;
+import me.cedric.siegegame.display.TeamColor;
 import me.cedric.siegegame.model.game.death.DeathManager;
 import me.cedric.siegegame.display.shop.ShopGUI;
 import me.cedric.siegegame.modules.abilityitems.SuperBreakerModule;
@@ -17,6 +19,7 @@ import me.cedric.siegegame.player.kits.Kit;
 import me.cedric.siegegame.player.kits.PlayerKitManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
@@ -113,10 +116,12 @@ public class WorldGame {
     private void assignTeam(GamePlayer player, Team team) {
         team.addPlayer(player);
 
-        for (Team t : teams)
-            player.getBorderHandler().addBorder(t.getSafeArea());
+        for (Team t : teams) {
+            TeamColor color = ColorUtil.getRelationalColor(team, t);
+            player.getBorderHandler().addBorder(t.getSafeArea(), color.getTransparentBlock());
+        }
 
-        player.getBorderHandler().addBorder(plugin.getGameManager().getCurrentMatch().getGameMap().getMapBorder());
+        player.getBorderHandler().addBorder(plugin.getGameManager().getCurrentMatch().getGameMap().getMapBorder(), Material.PURPLE_STAINED_GLASS);
 
         player.getBukkitPlayer().sendMessage(ChatColor.DARK_AQUA + "You have been assigned to the following team: " + team.getName());
     }
