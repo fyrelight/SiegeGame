@@ -3,6 +3,7 @@ package me.cedric.siegegame.config;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTItem;
 import me.cedric.siegegame.SiegeGamePlugin;
+import me.cedric.siegegame.display.NamedTeamColor;
 import me.cedric.siegegame.display.TeamColor;
 import me.cedric.siegegame.player.border.Border;
 import me.cedric.siegegame.util.BoundingBox;
@@ -22,7 +23,6 @@ import me.deltaorion.common.config.ConfigSection;
 import me.deltaorion.common.config.FileConfig;
 import me.deltaorion.common.config.InvalidConfigurationException;
 import me.deltaorion.common.config.yaml.YamlAdapter;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 
@@ -346,10 +346,7 @@ public class ConfigLoader implements GameConfig {
             }
 
             TextColor text = null;
-            if (colorName != null) {
-                text = NamedTextColor.NAMES.value(colorName);
-                if (text == null) text = TextColor.fromHexString(colorName);
-            }
+            if (colorName != null) text = TextColor.fromHexString(colorName);
             Material solid = null;
             if (solidName != null) solid = Material.matchMaterial(solidName);
             Material soft = null;
@@ -357,7 +354,10 @@ public class ConfigLoader implements GameConfig {
             Material transparent = null;
             if (transparentName != null) transparent = Material.matchMaterial(transparentName);
 
-            TeamColor color = TeamColor.of(text, solid, soft, transparent);
+            TeamColor color = null;
+            if (text == null) color = NamedTeamColor.matchNamedTextColor(colorName);
+            if (color == null) color = TeamColor.of(text, solid, soft, transparent);
+
             TeamFactory factory = new TeamFactory(safeArea, safeSpawn, name, key, color);
             factory.setTerritory(new Territory(plugin, polygon, factory));
             factories.add(factory);
