@@ -15,8 +15,9 @@ maps:
       y: 170
       z: 1254
     # World border. Players that get ~20 blocks from the corners of this box will
-    # see a red glass wall stopping them from running away from the map
+    # see a wall stopping them from running away from the map
     worldborder:
+      material: red_stained_glass
       x1: 23
       y1: 5000
       z1: 23
@@ -34,7 +35,14 @@ maps:
         # Team's color. If there are more than 2 teams, the plugin will use this color
         # instead of red and blue. Keep in mind having more than 2 teams has not been tested
         # and may cause issues.
+        # Can be hex string or a color name
         color: '#694200'
+        # Solid block used for the team spawn floor
+        solid_block: 'green_concrete'
+        # Soft block used for capture points module
+        soft_block: 'green_wool'
+        # Transparent block used for the team spawn bordeer
+        transparent_block: 'green_stained_glass'
         # Spawn point of this team. When someone in this team dies,
         # they will respawn in this location
         safe-spawn:
@@ -71,6 +79,9 @@ maps:
       datblockers:
         name: 'DATBLOCKERS'
         color: '#420699'
+        solid_block: 'orange_concrete'
+        soft_block: 'orange_wool'
+        transparent_block: 'orange_stained_glass'
         safe-spawn:
           x: -11852
           y: 84
