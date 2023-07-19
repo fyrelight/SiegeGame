@@ -1,6 +1,7 @@
 package me.cedric.siegegame.player.border;
 
 import me.cedric.siegegame.SiegeGamePlugin;
+import me.cedric.siegegame.model.teams.Team;
 import me.cedric.siegegame.player.border.blockers.EntityTracker;
 import me.cedric.siegegame.player.GamePlayer;
 import org.bukkit.Material;
@@ -31,8 +32,8 @@ public class PlayerBorderHandler {
         borders.put(border, new FakeBorderWall(player, border, 10, 5, material));
     }
 
-    public void addBorderBox(Border border, Material walls, Material floor, Material ceiling) {
-        borders.put(border, new FakeBorderBox(player, border, walls, floor, ceiling));
+    public void addSafeZone(Team team) {
+        borders.put(team.getSafeArea(), new FakeBorderSafeZone(player, team));
     }
 
     public Set<Border> getBorders() {
