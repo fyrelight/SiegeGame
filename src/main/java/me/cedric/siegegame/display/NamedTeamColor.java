@@ -4,6 +4,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 
+import javax.annotation.Nullable;
+import java.util.Locale;
+
 public enum NamedTeamColor implements TeamColor {
     BLACK(NamedTextColor.BLACK, Material.BLACK_CONCRETE, Material.BLACK_WOOL, Material.BLACK_STAINED_GLASS),
     BLUE(NamedTextColor.DARK_BLUE, Material.BLUE_CONCRETE, Material.BLUE_WOOL, Material.BLUE_STAINED_GLASS),
@@ -19,6 +22,7 @@ public enum NamedTeamColor implements TeamColor {
     PINK(NamedTextColor.LIGHT_PURPLE, Material.PINK_CONCRETE, Material.PINK_WOOL, Material.PINK_STAINED_GLASS),
     YELLOW(NamedTextColor.YELLOW, Material.YELLOW_CONCRETE, Material.YELLOW_WOOL, Material.YELLOW_STAINED_GLASS),
     WHITE(NamedTextColor.WHITE, Material.WHITE_CONCRETE, Material.WHITE_WOOL, Material.WHITE_STAINED_GLASS),
+    // No close NamedTextColor for these colors
     MAGENTA(TextColor.color(0x9C299B), Material.MAGENTA_CONCRETE, Material.MAGENTA_WOOL, Material.MAGENTA_STAINED_GLASS),
     BROWN(TextColor.color(0x563117), Material.BROWN_CONCRETE, Material.BROWN_WOOL, Material.BROWN_STAINED_GLASS),
     ;
@@ -33,6 +37,15 @@ public enum NamedTeamColor implements TeamColor {
         this.hardBlock = hardBlock;
         this.softBlock = softBlock;
         this.transparentBlock = transparentBlock;
+    }
+
+    @Nullable public static NamedTeamColor matchNamedTextColor(@Nullable String name) {
+        if (name == null) return null;
+        try {
+            return NamedTeamColor.valueOf(name.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     @Override

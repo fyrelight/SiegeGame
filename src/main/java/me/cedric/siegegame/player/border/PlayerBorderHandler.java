@@ -27,8 +27,8 @@ public class PlayerBorderHandler {
         return borders.get(border);
     }
 
-    public void addBorder(Border border) {
-        borders.put(border, new FakeBorderWall(player, border, 10, 5, Material.RED_STAINED_GLASS));
+    public void addBorder(Border border, Material material) {
+        borders.put(border, new FakeBorderWall(player, border, 10, 5, material));
     }
 
     public Set<Border> getBorders() {

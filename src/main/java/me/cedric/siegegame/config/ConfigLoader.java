@@ -3,6 +3,8 @@ package me.cedric.siegegame.config;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTItem;
 import me.cedric.siegegame.SiegeGamePlugin;
+import me.cedric.siegegame.display.NamedTeamColor;
+import me.cedric.siegegame.display.TeamColor;
 import me.cedric.siegegame.player.border.Border;
 import me.cedric.siegegame.util.BoundingBox;
 import me.cedric.siegegame.display.shop.ShopItem;
@@ -21,11 +23,11 @@ import me.deltaorion.common.config.ConfigSection;
 import me.deltaorion.common.config.FileConfig;
 import me.deltaorion.common.config.InvalidConfigurationException;
 import me.deltaorion.common.config.yaml.YamlAdapter;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.*;
+
 import java.awt.Color;
-import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
+
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
@@ -54,6 +56,7 @@ public class ConfigLoader implements GameConfig {
     private static final String MAPS_SECTION_DEFAULT_SPAWN_Y = "y";
     private static final String MAPS_SECTION_DEFAULT_SPAWN_Z = "z";
     private static final String MAPS_SECTION_MAP_MAPBORDER_KEY = "worldborder";
+    private static final String MAPS_SECTION_MAP_MAPBORDER_MATERIAL_KEY = "material";
     private static final String MAPS_SECTION_MAP_MAPBORDER_X1_KEY = "x1";
     private static final String MAPS_SECTION_MAP_MAPBORDER_Y1_KEY = "y1";
     private static final String MAPS_SECTION_MAP_MAPBORDER_Z1_KEY = "z1";
@@ -63,6 +66,9 @@ public class ConfigLoader implements GameConfig {
     private static final String MAPS_SECTION_WORLD_TEAMS_KEY = "teams";
     private static final String MAPS_SECTION_WORLD_TEAMS_NAME = "name";
     private static final String MAPS_SECTION_WORLD_TEAMS_COLOR = "color";
+    private static final String MAPS_SECTION_WORLD_TEAMS_SOLID = "solid_block";
+    private static final String MAPS_SECTION_WORLD_TEAMS_SOFT = "soft_block";
+    private static final String MAPS_SECTION_WORLD_TEAMS_TRANSPARENT = "transparent_block";
     private static final String MAPS_SECTION_TEAMS_SPAWN = "spawn-area";
     private static final String MAPS_SECTION_TEAMS_SPAWN_X1 = "x1";
     private static final String MAPS_SECTION_TEAMS_SPAWN_Y1 = "y1";
@@ -161,6 +167,7 @@ public class ConfigLoader implements GameConfig {
         Location defaultSpawn = new Location(null, x, y, z);
 
         ConfigSection worldBorderSection = section.getConfigurationSection(MAPS_SECTION_MAP_MAPBORDER_KEY);
+        String materialName = worldBorderSection.getString(MAPS_SECTION_MAP_MAPBORDER_MATERIAL_KEY);
         int x1 = worldBorderSection.getInt(MAPS_SECTION_MAP_MAPBORDER_X1_KEY);
         int y1 = worldBorderSection.getInt(MAPS_SECTION_MAP_MAPBORDER_Y1_KEY);
         int z1 = worldBorderSection.getInt(MAPS_SECTION_MAP_MAPBORDER_Z1_KEY);
@@ -179,7 +186,11 @@ public class ConfigLoader implements GameConfig {
         border.setCanLeave(false);
         border.setAllowBlockChanges(false);
         border.setInverse(false);
-        GameMap gameMap = new GameMap(fileMapLoader, displayName, new HashSet<>(), border, defaultSpawn);
+
+        Material material = Material.matchMaterial(materialName);
+        if (material == null || !material.isBlock()) material = Material.RED_STAINED_GLASS;
+
+        GameMap gameMap = new GameMap(fileMapLoader, displayName, new HashSet<>(), border, defaultSpawn, material);
         WorldGame worldGame = new WorldGame(plugin, mapID);
 
         ConfigSection teamsSection = section.getConfigurationSection(MAPS_SECTION_WORLD_TEAMS_KEY);
@@ -292,7 +303,10 @@ public class ConfigLoader implements GameConfig {
 
             ConfigSection currentTeamSection = section.getConfigurationSection(key);
             String name = currentTeamSection.getString(MAPS_SECTION_WORLD_TEAMS_NAME);
-            String hexColor = currentTeamSection.getString(MAPS_SECTION_WORLD_TEAMS_COLOR);
+            String colorName = currentTeamSection.getString(MAPS_SECTION_WORLD_TEAMS_COLOR);
+            String solidName = currentTeamSection.getString(MAPS_SECTION_WORLD_TEAMS_SOLID);
+            String softName = currentTeamSection.getString(MAPS_SECTION_WORLD_TEAMS_SOFT);
+            String transparentName = currentTeamSection.getString(MAPS_SECTION_WORLD_TEAMS_TRANSPARENT);
 
             ConfigSection spawnAreaSection = currentTeamSection.getConfigurationSection(MAPS_SECTION_TEAMS_SPAWN);
             int x1 = spawnAreaSection.getInt(MAPS_SECTION_TEAMS_SPAWN_X1);
@@ -337,7 +351,20 @@ public class ConfigLoader implements GameConfig {
                 }
             }
 
-            TeamFactory factory = new TeamFactory(safeArea, safeSpawn, name, key, color(hexColor));
+            TextColor text = null;
+            if (colorName != null) text = TextColor.fromHexString(colorName);
+            Material solid = null;
+            if (solidName != null) solid = Material.matchMaterial(solidName);
+            Material soft = null;
+            if (softName != null) soft = Material.matchMaterial(softName);
+            Material transparent = null;
+            if (transparentName != null) transparent = Material.matchMaterial(transparentName);
+
+            TeamColor color = null;
+            if (text == null) color = NamedTeamColor.matchNamedTextColor(colorName);
+            if (color == null) color = TeamColor.of(text, solid, soft, transparent);
+
+            TeamFactory factory = new TeamFactory(safeArea, safeSpawn, name, key, color);
             factory.setTerritory(new Territory(plugin, polygon, factory));
             factories.add(factory);
         }

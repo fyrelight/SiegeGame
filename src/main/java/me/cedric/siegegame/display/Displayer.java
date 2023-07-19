@@ -23,7 +23,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Displayer {
 
@@ -49,10 +48,11 @@ public class Displayer {
         List<String> lines = new ArrayList<>();
         lines.add("");
 
-        List<Team> teams = match.getWorldGame().getTeams().stream().sorted(Comparator.comparing(Team::getName)).collect(Collectors.toList());
+        List<Team> teams = match.getWorldGame().getTeams().stream().sorted(Comparator.comparing(Team::getName)).toList();
 
         for (Team team : teams) {
-            lines.add(ColorUtil.getRelationalColor(gamePlayer.getTeam(), team) + team.getName() + ": " +
+            String color = ColorUtil.getChatColor(ColorUtil.getRelationalColor(gamePlayer.getTeam(), team).getTextColor());
+            lines.add(color + team.getName() + ": " +
                     ChatColor.WHITE + team.getPoints() + " points");
         }
 
@@ -88,9 +88,9 @@ public class Displayer {
         TextComponent textComponent = Component.text("")
                 .color(TextColor.color(88, 140, 252))
                 .append(Component.text(Messages.PREFIX.toString())
-                .append(Component.text(ColorUtil.getRelationalColor(gamePlayer.getTeam(), killerTeam) + killer.getName())
+                .append(Component.text( killer.getName(), ColorUtil.getRelationalColor(gamePlayer.getTeam(), killerTeam).getTextColor())
                 .append(Component.text(" has killed ", TextColor.color(252, 252, 53)))
-                .append(Component.text(ColorUtil.getRelationalColor(gamePlayer.getTeam(), dead.getTeam()) + dead.getBukkitPlayer().getName() + " "))
+                .append(Component.text(dead.getBukkitPlayer().getName(), ColorUtil.getRelationalColor(gamePlayer.getTeam(), dead.getTeam()).getTextColor()))
                 .append(Component.text(killerTeam.getName() + ": ", TextColor.color(255, 194, 97)))
                 .append(Component.text("+" + plugin.getGameConfig().getPointsPerKill() + " points ", TextColor.color(255, 73, 23)))));
 
@@ -119,7 +119,8 @@ public class Displayer {
     public void displayInsideClaims(WorldGame worldGame, Territory territory) {
         Message message = Messages.CLAIMS_ENTERED;
         Team team = worldGame.getTeam(territory.getTeam().getConfigKey());
-        String s = String.format(message.toString(), ColorUtil.getRelationalColor(gamePlayer.getTeam(), team) + team.getName());
+        String color = ColorUtil.getChatColor(ColorUtil.getRelationalColor(gamePlayer.getTeam(), team).getTextColor());
+        String s = String.format(message.toString(), color + team.getName());
         ActionBar actionBar = new ActionBar(s, Duration.ofSeconds(3));
         apiPlayer.getActionBarManager().send(actionBar);
 
