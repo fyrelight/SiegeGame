@@ -20,7 +20,6 @@ import me.cedric.siegegame.player.kits.Kit;
 import me.cedric.siegegame.player.kits.PlayerKitManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
@@ -119,7 +118,7 @@ public class WorldGame {
 
         for (Team t : teams) {
             TeamColor color = ColorUtil.getRelationalColor(team, t);
-            player.getBorderHandler().addBorder(t.getSafeArea(), color.getTransparentBlock());
+            player.getBorderHandler().addBorderBox(t.getSafeArea(), color.getTransparentBlock(), color.getSolidBlock(), color.getTransparentBlock());
         }
 
         GameMap map = plugin.getGameManager().getCurrentMatch().getGameMap();

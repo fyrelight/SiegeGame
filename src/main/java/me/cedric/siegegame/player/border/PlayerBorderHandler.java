@@ -15,7 +15,7 @@ public class PlayerBorderHandler {
     private final SiegeGamePlugin plugin;
     private final GamePlayer player;
     private final EntityTracker entityTracker;
-    private final Map<Border, FakeBorderWall> borders = new HashMap<>();
+    private final Map<Border, FakeBorder> borders = new HashMap<>();
 
     public PlayerBorderHandler(SiegeGamePlugin plugin, GamePlayer player) {
         this.plugin = plugin;
@@ -23,12 +23,16 @@ public class PlayerBorderHandler {
         this.entityTracker = new EntityTracker();
     }
 
-    public FakeBorderWall getBorderDisplay(Border border) {
+    public FakeBorder getBorderDisplay(Border border) {
         return borders.get(border);
     }
 
     public void addBorder(Border border, Material material) {
         borders.put(border, new FakeBorderWall(player, border, 10, 5, material));
+    }
+
+    public void addBorderBox(Border border, Material walls, Material floor, Material ceiling) {
+        borders.put(border, new FakeBorderBox(player, border, walls, floor, ceiling));
     }
 
     public Set<Border> getBorders() {
