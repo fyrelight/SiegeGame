@@ -7,7 +7,6 @@ import me.cedric.siegegame.model.teams.Team;
 import me.cedric.siegegame.player.GamePlayer;
 import org.bukkit.entity.Player;
 
-@SuppressWarnings("deprecation")
 public enum Placeholder {
 
     TEAM_NAME("team_name", false, (siegeGame, gamePlayer, s, extra) -> {
@@ -17,7 +16,7 @@ public enum Placeholder {
 
     TEAM_COLOR("team_color", false, (siegeGame, gamePlayer, s, extra) -> {
         Team team = getTeam(siegeGame, gamePlayer, s);
-        return team == null ? "" : team.getColor().getRGB() + "";
+        return team == null ? "" : team.getColor().getTextColor().value() + "";
     }),
 
     TEAM_POINTS("team_points", false, (siegeGame, gamePlayer, s, extra) -> {
@@ -33,7 +32,7 @@ public enum Placeholder {
         if (!(extra[0] instanceof Player))
             return "";
         GamePlayer two = siegeGame.getGameManager().getCurrentMatch().getWorldGame().getPlayer(((Player) extra[0]).getUniqueId());
-        return ColorUtil.getRelationalColor(gamePlayer.getTeam(), two.getTeam()).toString();
+        return ColorUtil.getRelationalColor(gamePlayer.getTeam(), two.getTeam()).getMinimessage();
     });
 
     private final String param;

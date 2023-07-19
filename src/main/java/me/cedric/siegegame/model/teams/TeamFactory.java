@@ -1,5 +1,6 @@
 package me.cedric.siegegame.model.teams;
 
+import me.cedric.siegegame.display.TeamColor;
 import me.cedric.siegegame.player.border.Border;
 import me.cedric.siegegame.model.teams.territory.Territory;
 import org.bukkit.Location;
@@ -13,9 +14,9 @@ public class TeamFactory {
     private final Border safeArea;
     private final String configKey;
     private final String name;
-    private final Color color;
+    private final TeamColor color;
 
-    public TeamFactory(Border safeArea, Location safeSpawn, String name, String configKey, Color color) {
+    public TeamFactory(Border safeArea, Location safeSpawn, String name, String configKey, TeamColor color) {
         this.safeArea = safeArea;
         this.safeSpawn = safeSpawn;
         this.name = name;
@@ -51,7 +52,7 @@ public class TeamFactory {
         return configKey;
     }
 
-    public Color getColor() {
+    public TeamColor getColor() {
         return color;
     }
 
