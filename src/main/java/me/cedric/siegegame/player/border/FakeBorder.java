@@ -55,8 +55,8 @@ public interface FakeBorder {
         final int maxY;
         final Material floorMaterial;
         final Material ceilingMaterial;
-        final Floor floor;
-        final Floor ceiling;
+        Floor floor;
+        Floor ceiling;
         final List<Wall> walls;
 
         Box(int minX, int maxX, int minZ, int maxZ, int minY, int maxY, Material floor, Material ceiling) {
