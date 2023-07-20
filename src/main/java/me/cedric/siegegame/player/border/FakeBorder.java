@@ -53,25 +53,18 @@ public interface FakeBorder {
         final int maxZ;
         final int minY;
         final int maxY;
-        final Material floorMaterial;
-        final Material ceilingMaterial;
         Floor floor;
         Floor ceiling;
         final List<Wall> walls;
 
-        Box(int minX, int maxX, int minZ, int maxZ, int minY, int maxY, Material floor, Material ceiling) {
+        Box(int minX, int maxX, int minZ, int maxZ, int minY, int maxY) {
             this.minX = minX;
             this.maxX = maxX;
             this.minZ = minZ;
             this.maxZ = maxZ;
             this.minY = minY;
             this.maxY = maxY;
-            this.floorMaterial = floor;
-            this.ceilingMaterial = ceiling;
-            this.walls = new ArrayList<>();
-            createWalls();
-            this.floor = new Floor(minX, maxX, minZ, maxZ, minY);
-            this.ceiling = new Floor(minX, maxX, minZ, maxZ, maxY);
+            this.walls = new ArrayList<>();;
         }
 
         private void createWalls() {
@@ -103,14 +96,6 @@ public interface FakeBorder {
 
         public int getMaxY() {
             return maxY;
-        }
-
-        public Material getFloorMaterial() {
-            return floorMaterial;
-        }
-
-        public Material getCeilingMaterial() {
-            return ceilingMaterial;
         }
     }
 
