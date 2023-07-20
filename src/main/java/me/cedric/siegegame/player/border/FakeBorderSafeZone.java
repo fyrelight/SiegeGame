@@ -58,32 +58,24 @@ public class FakeBorderSafeZone implements FakeBorder {
         boolean update = false;
 
         if (shouldDisplay(border, gamePlayer)) {
-            if (wallVisible)
-                update = true;
+            if (wallVisible) {
+                // Exists; undraw and redraw
+                draw();
+                return;
+            }
             wallVisible = true;
+            //Doesn't exist; create and draw
+            create();
         } else {
             if (!wallVisible) {
+                // Exists; undraw and redraw
                 drawFloor();
                 return;
             }
             wallVisible = false;
-            destroy = true;
-        }
-
-        if (destroy) {
-            //System.out.println("Destroying");
+            // Exists; destroy and drawFloor
             destroy();
-            return;
         }
-
-        if(update) {
-            //System.out.println("Updating");
-            updateBox(border.getBoundingBox());
-            return;
-        }
-
-        //System.out.println("Creating");
-        create();
     }
 
     private void updateBox(BoundingBox borderBox) {
@@ -101,16 +93,13 @@ public class FakeBorderSafeZone implements FakeBorder {
     }
 
     private boolean shouldDisplay(Border border, GamePlayer gamePlayer) {
-        if (!this.team.equals(gamePlayer.getTeam()))
-            return true;
-        return !border.getBoundingBox().isColliding(gamePlayer.getBukkitPlayer().getLocation()) &&
-                combatManager.isInCombat(gamePlayer.getBukkitPlayer());
+        if (this.team != gamePlayer.getTeam()) return true;
+        return combatManager.isInCombat(gamePlayer.getBukkitPlayer());
     }
 
     @Override
     public void destroy() {
         FakeBlockManager fakeBlockManager = gamePlayer.getFakeBlockManager();
-        fakeBlockManager.removeAll();
         World world = gamePlayer.getBukkitPlayer().getWorld();
 
         box.walls.forEach(wall -> destroyWall(fakeBlockManager, world, wall));
@@ -146,8 +135,10 @@ public class FakeBorderSafeZone implements FakeBorder {
     public void create() {
         box.walls.clear();
         box.ceiling = null;
+        box.floor = null;
         createWalls();
         createCeiling();
+        createFloor();
         draw();
     }
 
@@ -168,8 +159,14 @@ public class FakeBorderSafeZone implements FakeBorder {
 
     private void draw() {
         FakeBlockManager fakeBlockManager = gamePlayer.getFakeBlockManager();
-        fakeBlockManager.removeAll();
         World world = gamePlayer.getBukkitPlayer().getWorld();
+
+        //Undraw
+        box.walls.forEach(wall -> destroyWall(fakeBlockManager, world, wall));
+        destroyFloor(fakeBlockManager, world, box.ceiling);
+        destroyFloor(fakeBlockManager, world, box.floor);
+
+        //Redraw
         for (Wall wall : box.walls) {
             drawWall(fakeBlockManager,world,wall,false);
         }
@@ -181,9 +178,12 @@ public class FakeBorderSafeZone implements FakeBorder {
 
     private void drawFloor() {
         FakeBlockManager fakeBlockManager = gamePlayer.getFakeBlockManager();
-        fakeBlockManager.removeAll();
         World world = gamePlayer.getBukkitPlayer().getWorld();
 
+        //Undraw
+        destroyFloor(fakeBlockManager, world, box.floor);
+
+        //Redraw
         drawFloor(fakeBlockManager,world,box.floor, teamColor.getSolidBlock(), true);
 
         fakeBlockManager.update();
