@@ -195,7 +195,7 @@ public class PlayerBorderListener implements Listener {
             return !border.isInverse();
 
         // If we get here player is outside any borders and should be teleported to last safe
-        return false;
+        return border.isInverse();
     }
 
     private void rollback(GamePlayer player) {

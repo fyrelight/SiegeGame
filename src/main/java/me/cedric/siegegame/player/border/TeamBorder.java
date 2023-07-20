@@ -28,6 +28,6 @@ public class TeamBorder extends Border {
     public boolean canLeave(GamePlayer gamePlayer) {
         if (team == null) return true;
         if (!this.team.getPlayers().contains(gamePlayer)) return false;
-        return combatManager.isInCombat(gamePlayer.getBukkitPlayer());
+        return (!combatManager.isInCombat(gamePlayer.getBukkitPlayer()));
     }
 }
