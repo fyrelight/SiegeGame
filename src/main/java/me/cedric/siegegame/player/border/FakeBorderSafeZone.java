@@ -53,6 +53,7 @@ public class FakeBorderSafeZone implements FakeBorder {
             wallVisible = true;
         } else {
             if (!wallVisible)
+                // DRAW THE FLOOR ONLY
                 return;
             wallVisible = false;
             destroy = true;
@@ -160,28 +161,32 @@ public class FakeBorderSafeZone implements FakeBorder {
         fakeBlockManager.removeAll();
         World world = gamePlayer.getBukkitPlayer().getWorld();
         for (Wall wall : box.walls) {
-            drawWall(fakeBlockManager,world,wall);
+            drawWall(fakeBlockManager,world,wall,false);
         }
-        drawFloor(fakeBlockManager,world,box.ceiling, teamColor.getTransparentBlock());
-        drawFloor(fakeBlockManager,world,box.floor, teamColor.getSolidBlock());
+        drawFloor(fakeBlockManager,world,box.ceiling, teamColor.getTransparentBlock(), false);
+        drawFloor(fakeBlockManager,world,box.floor, teamColor.getSolidBlock(), true);
 
         fakeBlockManager.update();
     }
 
-    private void drawFloor(FakeBlockManager manager, World world, Floor floor, Material material) {
+    private void drawFloor(FakeBlockManager manager, World world, Floor floor, Material material, boolean replaceSolid) {
         for (int x = floor.minX; x <= floor.maxX; x++) {
             for (int z = floor.minZ; z <= floor.maxZ; z++) {
                 int y = floor.y;
+                if (!replaceSolid && world.getBlockAt(x, y, z).isSolid())
+                    continue;
                 manager.addBlock(material, world, x, y, z, border.blockChangesAllowed());
             }
         }
     }
 
-    private void drawWall(FakeBlockManager manager, World world , Wall wall) {
+    private void drawWall(FakeBlockManager manager, World world , Wall wall, boolean replaceSolid) {
         for (int xz = wall.minXZ; xz <= wall.maxXZ; xz++) {
             for (int y = wall.minY; y <= wall.maxY; y++) {
                 int x = wall.getX(xz);
                 int z = wall.getZ(xz);
+                if (!replaceSolid && world.getBlockAt(x, y, z).isSolid())
+                    continue;
                 manager.addBlock(teamColor.getTransparentBlock(), world, x, y, z, border.blockChangesAllowed());
             }
         }
@@ -193,11 +198,11 @@ public class FakeBorderSafeZone implements FakeBorder {
         FakeBlockManager manager = gamePlayer.getFakeBlockManager();
 
         for(Wall newWall : newWalls) {
-            drawWall(manager,world,newWall);
+            drawWall(manager,world,newWall,false);
         }
 
-        drawFloor(manager,world,newCeiling, teamColor.getTransparentBlock());
-        drawFloor(manager,world,newFloor, teamColor.getSolidBlock());
+        drawFloor(manager,world,newCeiling, teamColor.getTransparentBlock(),false);
+        drawFloor(manager,world,newFloor, teamColor.getSolidBlock(),true);
 
         manager.update();
     }
