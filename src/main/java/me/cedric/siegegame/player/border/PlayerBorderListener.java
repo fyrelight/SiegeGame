@@ -31,6 +31,26 @@ public class PlayerBorderListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onInitialSpawn(PlayerJoinEvent event) {
+        SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
+
+        if (match == null)
+            return;
+
+        GamePlayer gamePlayer = match.getWorldGame().getPlayer(event.getPlayer().getUniqueId());
+
+        if (gamePlayer == null)
+            return;
+
+        if (!shouldCheck(gamePlayer))
+            return;
+
+        PlayerBorderHandler handler = gamePlayer.getBorderHandler();
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update()), 15);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
         SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
 
@@ -47,9 +67,7 @@ public class PlayerBorderListener implements Listener {
 
         PlayerBorderHandler handler = gamePlayer.getBorderHandler();
 
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update());
-        }, 0);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update()), 0);
     }
 
     @EventHandler
