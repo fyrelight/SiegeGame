@@ -2,6 +2,9 @@ package me.cedric.siegegame.player.border;
 
 import org.bukkit.Material;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public interface FakeBorder {
     void update();
     void destroy();
@@ -50,8 +53,11 @@ public interface FakeBorder {
         final int maxZ;
         final int minY;
         final int maxY;
-        final Material floor;
-        final Material ceiling;
+        final Material floorMaterial;
+        final Material ceilingMaterial;
+        final Floor floor;
+        final Floor ceiling;
+        final List<Wall> walls;
 
         Box(int minX, int maxX, int minZ, int maxZ, int minY, int maxY, Material floor, Material ceiling) {
             this.minX = minX;
@@ -60,8 +66,19 @@ public interface FakeBorder {
             this.maxZ = maxZ;
             this.minY = minY;
             this.maxY = maxY;
-            this.floor = floor;
-            this.ceiling = ceiling;
+            this.floorMaterial = floor;
+            this.ceilingMaterial = ceiling;
+            this.walls = new ArrayList<>();
+            createWalls();
+            this.floor = new Floor(minX, maxX, minZ, maxZ, minY);
+            this.ceiling = new Floor(minX, maxX, minZ, maxZ, maxY);
+        }
+
+        private void createWalls() {
+            walls.add(new Wall(minX, maxX, minZ, minY + 1, maxY - 1, true, true));
+            walls.add(new Wall(minX, maxX, maxZ, minY + 1, maxY - 1, true, false));
+            walls.add(new Wall(minZ, maxZ, minX, minY + 1, maxY - 1, false, true));
+            walls.add(new Wall(minZ, maxZ, maxX, minY + 1, maxY - 1, false, false));
         }
 
         public int getMinX() {
@@ -88,12 +105,48 @@ public interface FakeBorder {
             return maxY;
         }
 
-        public Material getFloor() {
-            return floor;
+        public Material getFloorMaterial() {
+            return floorMaterial;
         }
 
-        public Material getCeiling() {
-            return ceiling;
+        public Material getCeilingMaterial() {
+            return ceilingMaterial;
+        }
+    }
+
+    final class Floor {
+        final int minX;
+        final int maxX;
+        final int minZ;
+        final int maxZ;
+        final int y;
+
+        Floor(int minX, int maxX, int minZ, int maxZ, int y) {
+            this.minX = minX;
+            this.maxX = maxX;
+            this.minZ = minZ;
+            this.maxZ = maxZ;
+            this.y = y;
+        }
+
+        public int getMinX() {
+            return minX;
+        }
+
+        public int getMaxX() {
+            return maxX;
+        }
+
+        public int getMinZ() {
+            return minZ;
+        }
+
+        public int getMaxZ() {
+            return maxZ;
+        }
+
+        public int getY() {
+            return y;
         }
     }
 
