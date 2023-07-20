@@ -7,6 +7,7 @@ import me.cedric.siegegame.model.SiegeGameMatch;
 import me.cedric.siegegame.model.teams.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,9 +15,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.potion.PotionEffect;
 
 public class PlayerListener implements Listener {
@@ -25,6 +28,28 @@ public class PlayerListener implements Listener {
 
     public PlayerListener(SiegeGamePlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (!event.isCancelled()) return;
+        if (!(event.getWhoClicked() instanceof Player player)) return;
+
+        SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
+        if (match == null) return;
+
+        Inventory playerInventory = player.getInventory();
+        if (event.getClickedInventory() == null || !event.getClickedInventory().equals(playerInventory)) return;
+
+        Inventory shopInventory = match.getWorldGame().getShopGUI().getGUI().getInventory();
+        Inventory openInventory = player.getOpenInventory().getTopInventory();
+        if (!openInventory.equals(shopInventory)) return;
+
+        if (event.isShiftClick()) {
+            if (event.getCurrentItem() == null) return;
+            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+            playerInventory.clear(event.getSlot());
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
