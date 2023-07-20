@@ -50,12 +50,16 @@ public class ProjectileFollowTask extends BukkitRunnable {
         }
     }
 
-    private boolean checkBorder(Border safeArea, Vector lastSafe) {
-        int distance = safeArea.isInverse() ? 3 : -3;
-        if (safeArea.getBoundingBox().clone().expand(distance).isCollidingIgnoreInverse(lastSafe) && safeArea.isInverse()) {
-            return true;
-        }
-        return safeArea.getBoundingBox().clone().expand(distance).isCollidingIgnoreInverse(lastSafe) && !safeArea.isInverse();
+    private boolean checkBorder(Border border, Vector lastSafe) {
+        int distance = border.isInverse() ? 3 : -3;
+
+        // If you are inside a border and it is not inverse (regular border), is good
+        // Otherwise, you are inside an inverse border, is bad
+        if (border.getBoundingBox().clone().expand(distance).isColliding(lastSafe))
+            return !border.isInverse();
+
+        // If we get here player is outside the border, this is good if it is an inverse border
+        return border.isInverse();
     }
 
     private void deleteProjectileAndCancel(Projectile projectile, Location lastSafe, PlayerBorderHandler playerBorderHandler) {
