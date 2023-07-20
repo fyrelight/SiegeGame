@@ -148,9 +148,7 @@ public class FakeBorderSafeZone implements FakeBorder {
         destroyFloor(fakeBlockManager, world, box.floor);
 
         //Redraw
-        for (Wall wall : box.walls) {
-            drawWall(fakeBlockManager,world,wall);
-        }
+        box.walls.forEach(wall -> drawWall(fakeBlockManager, world, wall));
         drawFloor(fakeBlockManager,world,box.ceiling, teamColor.getTransparentBlock(), false);
         drawFloor(fakeBlockManager,world,box.floor, teamColor.getSolidBlock(), true);
 
