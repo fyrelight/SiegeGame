@@ -116,8 +116,8 @@ public class BoundingBox {
     }
 
     public boolean isColliding(Vector2D b) {
-        return (b.getX() >= min.getX() && b.getX() <= max.getX()) &&
-               (b.getZ() >= min.getZ() && b.getZ() <= max.getZ());
+        return (b.getX() >= min.getX() && b.getX() <= max.getX() + 1) &&
+               (b.getZ() >= min.getZ() && b.getZ() <= max.getZ() + 1);
     }
 
     public boolean isColliding(Location l) {
@@ -125,15 +125,15 @@ public class BoundingBox {
     }
 
     public boolean isCollidingIgnoreInverse(Vector p) {
-        return (p.getX() >= min.getX() && p.getX() <= max.getX()) &&
-                (p.getY() >= min.getY() && p.getY() <= max.getY()) &&
-                (p.getZ() >= min.getZ() && p.getZ() <= max.getZ());
+        return (p.getX() >= min.getX() && p.getX() <= max.getX() + 1) &&
+                (p.getY() >= min.getY() && p.getY() <= max.getY() + 1) &&
+                (p.getZ() >= min.getZ() && p.getZ() <= max.getZ() + 1);
     }
 
     public boolean isColliding(Vector p) {
-        return (p.getX() >= min.getX() && p.getX() <= max.getX()) &&
-                (p.getY() >= min.getY() && p.getY() <= max.getY()) &&
-                (p.getZ() >= min.getZ() && p.getZ() <= max.getZ());
+        return (p.getX() >= min.getX() && p.getX() <= max.getX() + 1) &&
+                (p.getY() >= min.getY() && p.getY() <= max.getY() + 1) &&
+                (p.getZ() >= min.getZ() && p.getZ() <= max.getZ() + 1);
     }
 
     public boolean contains(@Nullable BoundingBox b) {
