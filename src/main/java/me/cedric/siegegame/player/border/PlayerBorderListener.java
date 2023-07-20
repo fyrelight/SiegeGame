@@ -41,13 +41,9 @@ public class PlayerBorderListener implements Listener {
         if (gamePlayer == null)
             return;
 
-        PlayerBorderHandler handler = gamePlayer.getBorderHandler();
+        BorderUpdateTask borderUpdateTask = new BorderUpdateTask(gamePlayer);
 
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            if (!shouldCheck(gamePlayer))
-                return;
-            handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update());
-        }, 1, 1);
+        borderUpdateTask.runTaskTimer(plugin, 0, 1);
     }
 
     /*
