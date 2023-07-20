@@ -1,17 +1,23 @@
 package me.cedric.siegegame.player.border;
 
+import com.github.sirblobman.combatlogx.api.ICombatLogX;
+import com.github.sirblobman.combatlogx.api.manager.ICombatManager;
 import me.cedric.siegegame.display.ColorUtil;
 import me.cedric.siegegame.display.TeamColor;
 import me.cedric.siegegame.fake.FakeBlockManager;
 import me.cedric.siegegame.model.teams.Team;
 import me.cedric.siegegame.player.GamePlayer;
 import me.cedric.siegegame.util.BoundingBox;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class FakeBorderSafeZone implements FakeBorder {
     private final Team team;
@@ -20,6 +26,7 @@ public class FakeBorderSafeZone implements FakeBorder {
     private final Box box;
     private final GamePlayer gamePlayer;
     private final Border border;
+    private final ICombatManager combatManager;
     private boolean wallVisible;
 
     public FakeBorderSafeZone(GamePlayer gamePlayer, Team team) {
@@ -39,16 +46,18 @@ public class FakeBorderSafeZone implements FakeBorder {
 
         this.box = new Box(minX, maxX, minZ, maxZ, minY, maxY);
         createFloor();
+
+        ICombatLogX combatLogX = (ICombatLogX) Bukkit.getPluginManager().getPlugin("CombatLogX");
+        this.combatManager = Objects.requireNonNull(combatLogX).getCombatManager();
     }
 
 
     @Override
     public void update() {
-        Location location = gamePlayer.getBukkitPlayer().getLocation();
         boolean destroy = false;
         boolean update = false;
 
-        if (shouldDisplay(border,location)) {
+        if (shouldDisplay(border, gamePlayer)) {
             if (wallVisible)
                 update = true;
             wallVisible = true;
@@ -91,8 +100,11 @@ public class FakeBorderSafeZone implements FakeBorder {
         drawUpdate(oldWalls,box.walls,oldCeiling,box.ceiling,oldFloor,box.floor);
     }
 
-    private boolean shouldDisplay(Border border, Location location) {
-        return !border.getBoundingBox().isColliding(location);
+    private boolean shouldDisplay(Border border, GamePlayer gamePlayer) {
+        if (!this.team.equals(gamePlayer.getTeam()))
+            return true;
+        return !border.getBoundingBox().isColliding(gamePlayer.getBukkitPlayer().getLocation()) &&
+                combatManager.isInCombat(gamePlayer.getBukkitPlayer());
     }
 
     @Override
