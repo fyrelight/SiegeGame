@@ -69,9 +69,7 @@ public class FakeBorderSafeZone implements FakeBorder {
     }
 
     private boolean shouldDisplay(GamePlayer gamePlayer) {
-        Bukkit.getLogger().info("Checking if should display for " + gamePlayer.getBukkitPlayer().getName());
         if (this.team.getPlayers().contains(gamePlayer)) return true;
-        Bukkit.getLogger().info("Player is not in team " + team.getName());
         return combatManager.isInCombat(gamePlayer.getBukkitPlayer());
     }
 
@@ -89,8 +87,6 @@ public class FakeBorderSafeZone implements FakeBorder {
         box.floor = null;
 
         createFloor();
-
-        fakeBlockManager.update();
     }
 
     private void destroyFloor(FakeBlockManager manager, World world, Floor floor) {

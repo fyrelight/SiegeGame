@@ -1,13 +1,11 @@
 package me.cedric.siegegame.player.border;
 
-import com.github.sirblobman.combatlogx.api.event.PlayerTagEvent;
-import com.github.sirblobman.combatlogx.api.event.PlayerUntagEvent;
 import me.cedric.siegegame.SiegeGamePlugin;
 import me.cedric.siegegame.player.border.blockers.EntityTracker;
-import me.cedric.siegegame.player.border.blockers.ProjectileFollowTask;
 import me.cedric.siegegame.enums.Permissions;
 import me.cedric.siegegame.model.SiegeGameMatch;
 import me.cedric.siegegame.player.GamePlayer;
+import me.cedric.siegegame.player.border.blockers.ProjectileFollowTask;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -17,11 +15,9 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.List;
 
@@ -33,6 +29,28 @@ public class PlayerBorderListener implements Listener {
         this.plugin = plugin;
     }
 
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onJoin(PlayerJoinEvent event) {
+        SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
+
+        if (match == null)
+            return;
+
+        GamePlayer gamePlayer = match.getWorldGame().getPlayer(event.getPlayer().getUniqueId());
+
+        if (gamePlayer == null)
+            return;
+
+        PlayerBorderHandler handler = gamePlayer.getBorderHandler();
+
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            if (!shouldCheck(gamePlayer))
+                return;
+            handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update());
+        }, 1, 1);
+    }
+
+    /*
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInitialSpawn(PlayerJoinEvent event) {
         SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
@@ -90,7 +108,7 @@ public class PlayerBorderListener implements Listener {
 
         PlayerBorderHandler handler = gamePlayer.getBorderHandler();
 
-        Bukkit.getScheduler().runTaskLater(plugin, () -> handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update()), 0);
+        handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -111,7 +129,7 @@ public class PlayerBorderListener implements Listener {
         PlayerBorderHandler handler = gamePlayer.getBorderHandler();
 
         handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update());
-    }
+    }*/
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
@@ -137,9 +155,6 @@ public class PlayerBorderListener implements Listener {
             return;
 
         PlayerBorderHandler handler = gamePlayer.getBorderHandler();
-
-        if (event.hasChangedBlock())
-            handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update());
 
         if (handler.getBorders().stream().anyMatch(border -> !analyseMove(event.getTo(), border)))
             rollback(gamePlayer);
