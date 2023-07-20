@@ -1,5 +1,7 @@
 package me.cedric.siegegame.player.border;
 
+import com.github.sirblobman.combatlogx.api.event.PlayerTagEvent;
+import com.github.sirblobman.combatlogx.api.event.PlayerUntagEvent;
 import me.cedric.siegegame.SiegeGamePlugin;
 import me.cedric.siegegame.player.border.blockers.EntityTracker;
 import me.cedric.siegegame.player.border.blockers.ProjectileFollowTask;
@@ -15,6 +17,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -68,6 +71,46 @@ public class PlayerBorderListener implements Listener {
         PlayerBorderHandler handler = gamePlayer.getBorderHandler();
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update()), 0);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onTagged(PlayerTagEvent event) {
+        SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
+
+        if (match == null)
+            return;
+
+        GamePlayer gamePlayer = match.getWorldGame().getPlayer(event.getPlayer().getUniqueId());
+
+        if (gamePlayer == null)
+            return;
+
+        if (!shouldCheck(gamePlayer))
+            return;
+
+        PlayerBorderHandler handler = gamePlayer.getBorderHandler();
+
+        handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onUnTagged(PlayerUntagEvent event) {
+        SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
+
+        if (match == null)
+            return;
+
+        GamePlayer gamePlayer = match.getWorldGame().getPlayer(event.getPlayer().getUniqueId());
+
+        if (gamePlayer == null)
+            return;
+
+        if (!shouldCheck(gamePlayer))
+            return;
+
+        PlayerBorderHandler handler = gamePlayer.getBorderHandler();
+
+        handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update());
     }
 
     @EventHandler
