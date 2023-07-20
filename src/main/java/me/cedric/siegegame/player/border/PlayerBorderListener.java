@@ -73,7 +73,7 @@ public class PlayerBorderListener implements Listener {
         Bukkit.getScheduler().runTaskLater(plugin, () -> handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update()), 0);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onTagged(PlayerTagEvent event) {
         SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
 
@@ -90,7 +90,7 @@ public class PlayerBorderListener implements Listener {
 
         PlayerBorderHandler handler = gamePlayer.getBorderHandler();
 
-        handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update());
+        Bukkit.getScheduler().runTaskLater(plugin, () -> handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update()), 0);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
