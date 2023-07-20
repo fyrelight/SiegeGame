@@ -107,6 +107,8 @@ public class FakeBorderSafeZone implements FakeBorder {
         box.walls.clear();
         box.ceiling = null;
 
+        drawFloor();
+
         fakeBlockManager.update();
     }
 
