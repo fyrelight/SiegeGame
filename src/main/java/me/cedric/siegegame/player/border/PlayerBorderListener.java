@@ -41,7 +41,7 @@ public class PlayerBorderListener implements Listener {
         if (gamePlayer == null)
             return;
 
-        BorderUpdateTask borderUpdateTask = new BorderUpdateTask(gamePlayer);
+        BorderUpdateTask borderUpdateTask = new BorderUpdateTask(plugin.getGameManager(), event.getPlayer().getUniqueId());
 
         borderUpdateTask.runTaskTimer(plugin, 0, 1);
     }
