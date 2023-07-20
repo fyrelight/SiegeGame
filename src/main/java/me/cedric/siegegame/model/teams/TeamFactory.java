@@ -1,22 +1,20 @@
 package me.cedric.siegegame.model.teams;
 
 import me.cedric.siegegame.display.TeamColor;
-import me.cedric.siegegame.player.border.Border;
 import me.cedric.siegegame.model.teams.territory.Territory;
+import me.cedric.siegegame.player.border.TeamBorder;
 import org.bukkit.Location;
-
-import java.awt.Color;
 
 public class TeamFactory {
 
     private Territory territory;
     private Location safeSpawn;
-    private final Border safeArea;
+    private final TeamBorder safeArea;
     private final String configKey;
     private final String name;
     private final TeamColor color;
 
-    public TeamFactory(Border safeArea, Location safeSpawn, String name, String configKey, TeamColor color) {
+    public TeamFactory(TeamBorder safeArea, Location safeSpawn, String name, String configKey, TeamColor color) {
         this.safeArea = safeArea;
         this.safeSpawn = safeSpawn;
         this.name = name;
@@ -32,7 +30,7 @@ public class TeamFactory {
         this.territory = territory;
     }
 
-    public Border getSafeArea() {
+    public TeamBorder getSafeArea() {
         return safeArea;
     }
 

@@ -69,7 +69,7 @@ public class FakeBorderSafeZone implements FakeBorder {
     }
 
     private boolean shouldDisplay(GamePlayer gamePlayer) {
-        if (this.team.getPlayers().contains(gamePlayer)) return true;
+        if (!this.team.getPlayers().contains(gamePlayer)) return true;
         return combatManager.isInCombat(gamePlayer.getBukkitPlayer());
     }
 

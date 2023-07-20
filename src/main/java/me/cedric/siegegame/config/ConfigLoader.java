@@ -6,6 +6,7 @@ import me.cedric.siegegame.SiegeGamePlugin;
 import me.cedric.siegegame.display.NamedTeamColor;
 import me.cedric.siegegame.display.TeamColor;
 import me.cedric.siegegame.player.border.Border;
+import me.cedric.siegegame.player.border.TeamBorder;
 import me.cedric.siegegame.util.BoundingBox;
 import me.cedric.siegegame.display.shop.ShopItem;
 import me.cedric.siegegame.model.teams.Team;
@@ -316,7 +317,7 @@ public class ConfigLoader implements GameConfig {
             int x2 = spawnAreaSection.getInt(MAPS_SECTION_TEAMS_SPAWN_X2);
             int y2 = spawnAreaSection.getInt(MAPS_SECTION_TEAMS_SPAWN_Y2);
             int z2 = spawnAreaSection.getInt(MAPS_SECTION_TEAMS_SPAWN_Z2);
-            Border safeArea = new Border(new BoundingBox(null, x1, y1, z1, x2, y2, z2));
+            TeamBorder safeArea = new TeamBorder(new BoundingBox(null, x1, y1, z1, x2, y2, z2));
             safeArea.setAllowBlockChanges(false);
             safeArea.setInverse(true);
 

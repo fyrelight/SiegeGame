@@ -156,7 +156,7 @@ public class PlayerBorderListener implements Listener {
 
         PlayerBorderHandler handler = gamePlayer.getBorderHandler();
 
-        if (handler.getBorders().stream().anyMatch(border -> !analyseMove(event.getTo(), border)))
+        if (handler.getBorders().stream().anyMatch(border -> !analyseMove(event.getTo(), border, gamePlayer)))
             rollback(gamePlayer);
         else // Only set last position IF it is good rather than always doing it. This ensures this because you either roll the person back or they are safe
             gamePlayer.getBorderHandler().getEntityTracker().setLastPosition(event.getPlayer().getUniqueId(), event.getTo().clone());
@@ -185,8 +185,8 @@ public class PlayerBorderListener implements Listener {
         followTask.runTaskTimer(plugin, 0, 1);
     }
 
-    private boolean analyseMove(Location location, Border border) {
-        if (border.canLeave()) // if you can leave the border, movement is always good
+    private boolean analyseMove(Location location, Border border, GamePlayer gamePlayer) {
+        if (border.canLeave(gamePlayer)) // if you can leave the border, movement is always good
             return true;
 
         // If you are inside a border and it is not inverse (regular border), movement is good
