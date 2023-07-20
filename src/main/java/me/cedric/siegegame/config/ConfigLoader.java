@@ -187,7 +187,8 @@ public class ConfigLoader implements GameConfig {
         border.setAllowBlockChanges(false);
         border.setInverse(false);
 
-        Material material = Material.matchMaterial(materialName);
+        Material material = null;
+        if (materialName != null) material = Material.matchMaterial(materialName);
         if (material == null || !material.isBlock()) material = Material.RED_STAINED_GLASS;
 
         GameMap gameMap = new GameMap(fileMapLoader, displayName, new HashSet<>(), border, defaultSpawn, material);
