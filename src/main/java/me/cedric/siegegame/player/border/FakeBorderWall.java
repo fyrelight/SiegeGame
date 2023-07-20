@@ -10,7 +10,7 @@ import org.bukkit.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FakeBorderWall {
+public class FakeBorderWall implements FakeBorder {
 
     private final int width;
     private final int height;
@@ -31,6 +31,7 @@ public class FakeBorderWall {
         this.border = border;
     }
 
+    @Override
     public void update() {
         Location location = gamePlayer.getBukkitPlayer().getLocation();
         boolean destroy = false;
@@ -83,6 +84,7 @@ public class FakeBorderWall {
         return borderBox.isColliding(location) && !minBox.isColliding(location);
     }
 
+    @Override
     public void destroy() {
         FakeBlockManager fakeBlockManager = gamePlayer.getFakeBlockManager();
         fakeBlockManager.removeAll();
@@ -96,8 +98,8 @@ public class FakeBorderWall {
     }
 
     private void destroyWall(FakeBlockManager manager, World world, Wall wall) {
-        for (int xz = wall.minXZ; xz < wall.maxXZ; xz++) {
-            for (int y = wall.minY; y < wall.maxY; y++) {
+        for (int xz = wall.minXZ; xz <= wall.maxXZ; xz++) {
+            for (int y = wall.minY; y <= wall.maxY; y++) {
                 int x = wall.getX(xz);
                 int z = wall.getZ(xz);
                 manager.removeBlock(world, x, y, z);
@@ -150,6 +152,7 @@ public class FakeBorderWall {
         return null;
     }
 
+    @Override
     public void create() {
         WallProjection wallProjection = projectXZ(border.getBoundingBox(), gamePlayer.getBukkitPlayer().getLocation());
 
@@ -171,8 +174,8 @@ public class FakeBorderWall {
     }
 
     protected void createWall(FakeBlockManager manager, World world , Wall wall) {
-        for (int xz = wall.minXZ; xz < wall.maxXZ; xz++) {
-            for (int y = wall.minY; y < wall.maxY; y++) {
+        for (int xz = wall.minXZ; xz <= wall.maxXZ; xz++) {
+            for (int y = wall.minY; y <= wall.maxY; y++) {
                 int x = wall.getX(xz);
                 int z = wall.getZ(xz);
                 manager.addBlock(material, world, x, y, z, border.blockChangesAllowed());
@@ -210,8 +213,8 @@ public class FakeBorderWall {
     }
 
     private void removeOldDiffY(FakeBlockManager manager, World world, Wall oldWall, int minY, int maxY) {
-        for(int xz = oldWall.minXZ; xz < oldWall.maxXZ;xz++) {
-            for (int y = minY; y < maxY; y++) {
+        for(int xz = oldWall.minXZ; xz <= oldWall.maxXZ;xz++) {
+            for (int y = minY; y <= maxY; y++) {
                 int x = oldWall.getX(xz);
                 int z = oldWall.getZ(xz);
                 manager.removeBlock(world, x, y, z);
@@ -220,8 +223,8 @@ public class FakeBorderWall {
     }
 
     private void addNewDiffY(FakeBlockManager manager, World world, Wall newWall, int minY, int maxY) {
-        for(int xz = newWall.minXZ; xz < newWall.maxXZ;xz++) {
-            for (int y = minY; y < maxY; y++) {
+        for(int xz = newWall.minXZ; xz <= newWall.maxXZ;xz++) {
+            for (int y = minY; y <= maxY; y++) {
                 int x = newWall.getX(xz);
                 int z = newWall.getZ(xz);
                 manager.addBlock(material,world, x, y, z, border.blockChangesAllowed());
@@ -230,8 +233,8 @@ public class FakeBorderWall {
     }
 
     private void addNewDiffXZ(FakeBlockManager manager, World world, Wall newWall, int minXZ, int maxXZ) {
-        for(int xz = minXZ; xz < maxXZ;xz++) {
-            for (int y = newWall.minY; y < newWall.maxY; y++) {
+        for(int xz = minXZ; xz <= maxXZ;xz++) {
+            for (int y = newWall.minY; y <= newWall.maxY; y++) {
                 int x = newWall.getX(xz);
                 int z = newWall.getZ(xz);
                 manager.addBlock(material,world, x, y, z, border.blockChangesAllowed());
@@ -240,8 +243,8 @@ public class FakeBorderWall {
     }
 
     private void removeDiffOldXZ(FakeBlockManager manager, World world, Wall oldWall, int minXZ, int maxXZ) {
-        for(int xz = minXZ; xz < maxXZ;xz++) {
-            for (int y = oldWall.minY; y < oldWall.maxY; y++) {
+        for(int xz = minXZ; xz <= maxXZ;xz++) {
+            for (int y = oldWall.minY; y <= oldWall.maxY; y++) {
                 int x = oldWall.getX(xz);
                 int z = oldWall.getZ(xz);
                 manager.removeBlock(world, x, y, z);
@@ -391,104 +394,8 @@ public class FakeBorderWall {
         return height;
     }
 
+    @Override
     public Border getBorder() {
         return border;
-    }
-
-    protected final class WallProjection {
-        private final int XZ;
-        private final int perpendicular;
-        private final int Y;
-        private final boolean xDimension;
-        private final boolean facingPositive;
-
-        private WallProjection(int XZ, int perpendicular, int Y, boolean xDimension, boolean facingPositive) {
-            this.XZ = XZ;
-            this.perpendicular = perpendicular;
-            this.Y = Y;
-            this.xDimension = xDimension;
-            this.facingPositive = facingPositive;
-        }
-
-        public int getXZ() {
-            return XZ;
-        }
-
-        public int getPerpendicular() {
-            return perpendicular;
-        }
-
-        public int getY() {
-            return Y;
-        }
-
-        public boolean xDimension() {
-            return xDimension;
-        }
-
-        public boolean isFacingPositive() {
-            return facingPositive;
-        }
-    }
-
-    static final class Wall {
-        private final int minXZ;
-        private final int maxXZ;
-        private final int minY;
-        private final int maxY;
-        private final int perpendicular;
-        //whether the wall is on the x-direction, that it the wall is facing
-        //a z direction!
-        private final boolean xDimension;
-        private final boolean facingPositive;
-
-        private Wall(int minXZ, int maxXZ, int perpendicular, int minY, int maxY, boolean xDimension, boolean facingPositive) {
-            this.minXZ = minXZ;
-            this.maxXZ = maxXZ;
-            this.minY = minY;
-            this.maxY = maxY;
-            this.perpendicular = perpendicular;
-            this.xDimension = xDimension;
-            this.facingPositive = facingPositive;
-        }
-
-        public int getMinXZ() {
-            return minXZ;
-        }
-
-        public int getMaxXZ() {
-            return maxXZ;
-        }
-
-        public int getMinY() {
-            return minY;
-        }
-
-        public int getMaxY() {
-            return maxY;
-        }
-
-        public boolean isxDimension() {
-            return xDimension;
-        }
-
-        public int getPerpendicular() {
-            return perpendicular;
-        }
-
-        public int getX(int xz) {
-            if (xDimension)
-                return xz;
-
-            return perpendicular;
-        }
-
-
-        public int getZ(int xz) {
-            if (xDimension)
-                return perpendicular;
-
-            return xz;
-        }
     }
 }

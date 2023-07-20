@@ -22,7 +22,7 @@ public class TeamColorImpl implements TeamColor {
     }
 
     @Override
-    public Material getHardBlock() {
+    public Material getSolidBlock() {
         return hardBlock;
     }
 

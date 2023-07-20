@@ -33,6 +33,7 @@ public class Team {
         this.color = factory.getColor();
         this.safeSpawn = factory.getSafeSpawn();
         this.territory = factory.getTerritory();
+        factory.getSafeArea().setTeam(this);
     }
 
     public ImmutableSet<GamePlayer> getPlayers() {

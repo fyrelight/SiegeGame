@@ -2,10 +2,11 @@ package me.cedric.siegegame.player.border;
 
 import me.cedric.siegegame.SiegeGamePlugin;
 import me.cedric.siegegame.player.border.blockers.EntityTracker;
-import me.cedric.siegegame.player.border.blockers.ProjectileFollowTask;
 import me.cedric.siegegame.enums.Permissions;
 import me.cedric.siegegame.model.SiegeGameMatch;
 import me.cedric.siegegame.player.GamePlayer;
+import me.cedric.siegegame.player.border.blockers.ProjectileFollowTask;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -15,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.List;
@@ -26,6 +28,104 @@ public class PlayerBorderListener implements Listener {
     public PlayerBorderListener(SiegeGamePlugin plugin) {
         this.plugin = plugin;
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onJoin(PlayerJoinEvent event) {
+        SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
+
+        if (match == null)
+            return;
+
+        GamePlayer gamePlayer = match.getWorldGame().getPlayer(event.getPlayer().getUniqueId());
+
+        if (gamePlayer == null)
+            return;
+
+        BorderUpdateTask borderUpdateTask = new BorderUpdateTask(gamePlayer);
+
+        borderUpdateTask.runTaskTimer(plugin, 0, 1);
+    }
+
+    /*
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onInitialSpawn(PlayerJoinEvent event) {
+        SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
+
+        if (match == null)
+            return;
+
+        GamePlayer gamePlayer = match.getWorldGame().getPlayer(event.getPlayer().getUniqueId());
+
+        if (gamePlayer == null)
+            return;
+
+        if (!shouldCheck(gamePlayer))
+            return;
+
+        PlayerBorderHandler handler = gamePlayer.getBorderHandler();
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update()), 15);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onTeleport(PlayerTeleportEvent event) {
+        SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
+
+        if (match == null)
+            return;
+
+        GamePlayer gamePlayer = match.getWorldGame().getPlayer(event.getPlayer().getUniqueId());
+
+        if (gamePlayer == null)
+            return;
+
+        if (!shouldCheck(gamePlayer))
+            return;
+
+        PlayerBorderHandler handler = gamePlayer.getBorderHandler();
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update()), 0);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onTagged(PlayerTagEvent event) {
+        SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
+
+        if (match == null)
+            return;
+
+        GamePlayer gamePlayer = match.getWorldGame().getPlayer(event.getPlayer().getUniqueId());
+
+        if (gamePlayer == null)
+            return;
+
+        if (!shouldCheck(gamePlayer))
+            return;
+
+        PlayerBorderHandler handler = gamePlayer.getBorderHandler();
+
+        handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onUnTagged(PlayerUntagEvent event) {
+        SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
+
+        if (match == null)
+            return;
+
+        GamePlayer gamePlayer = match.getWorldGame().getPlayer(event.getPlayer().getUniqueId());
+
+        if (gamePlayer == null)
+            return;
+
+        if (!shouldCheck(gamePlayer))
+            return;
+
+        PlayerBorderHandler handler = gamePlayer.getBorderHandler();
+
+        handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update());
+    }*/
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
@@ -52,10 +152,7 @@ public class PlayerBorderListener implements Listener {
 
         PlayerBorderHandler handler = gamePlayer.getBorderHandler();
 
-        if (event.hasChangedBlock())
-            handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update());
-
-        if (handler.getBorders().stream().anyMatch(border -> !analyseMove(event.getTo(), border)))
+        if (handler.getBorders().stream().anyMatch(border -> !analyseMove(event.getTo(), border, gamePlayer)))
             rollback(gamePlayer);
         else // Only set last position IF it is good rather than always doing it. This ensures this because you either roll the person back or they are safe
             gamePlayer.getBorderHandler().getEntityTracker().setLastPosition(event.getPlayer().getUniqueId(), event.getTo().clone());
@@ -84,8 +181,8 @@ public class PlayerBorderListener implements Listener {
         followTask.runTaskTimer(plugin, 0, 1);
     }
 
-    private boolean analyseMove(Location location, Border border) {
-        if (border.canLeave()) // if you can leave the border, movement is always good
+    private boolean analyseMove(Location location, Border border, GamePlayer gamePlayer) {
+        if (border.canLeave(gamePlayer)) // if you can leave the border, movement is always good
             return true;
 
         // If you are inside a border and it is not inverse (regular border), movement is good
@@ -94,7 +191,7 @@ public class PlayerBorderListener implements Listener {
             return !border.isInverse();
 
         // If we get here player is outside any borders and should be teleported to last safe
-        return false;
+        return border.isInverse();
     }
 
     private void rollback(GamePlayer player) {

@@ -1,5 +1,6 @@
 package me.cedric.siegegame.player.border;
 
+import me.cedric.siegegame.player.GamePlayer;
 import me.cedric.siegegame.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,7 +62,7 @@ public class Border {
         return blockPlaceAllowed;
     }
 
-    public boolean canLeave() {
+    public boolean canLeave(GamePlayer gamePlayer) {
         return canLeave;
     }
 

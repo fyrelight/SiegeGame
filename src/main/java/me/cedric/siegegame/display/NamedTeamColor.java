@@ -54,7 +54,7 @@ public enum NamedTeamColor implements TeamColor {
     }
 
     @Override
-    public Material getHardBlock() {
+    public Material getSolidBlock() {
         return hardBlock;
     }
 

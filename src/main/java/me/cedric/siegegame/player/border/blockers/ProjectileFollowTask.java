@@ -33,7 +33,7 @@ public class ProjectileFollowTask extends BukkitRunnable {
         PlayerBorderHandler playerBorderHandler = player.getBorderHandler();
         Location lastSafe = entityTracker.getLastPosition(projectile.getUniqueId()).clone();
         for (Border border : playerBorderHandler.getBorders()) {
-            if (border.canLeave())
+            if (border.canLeave(player))
                 continue;
 
             if (!checkBorder(border, lastSafe.toVector()))

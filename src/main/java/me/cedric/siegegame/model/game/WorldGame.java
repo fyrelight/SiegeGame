@@ -4,8 +4,6 @@ import com.github.sirblobman.combatlogx.api.manager.ICombatManager;
 import com.github.sirblobman.combatlogx.api.object.UntagReason;
 import com.google.common.collect.ImmutableSet;
 import me.cedric.siegegame.SiegeGamePlugin;
-import me.cedric.siegegame.display.ColorUtil;
-import me.cedric.siegegame.display.TeamColor;
 import me.cedric.siegegame.model.game.death.DeathManager;
 import me.cedric.siegegame.display.shop.ShopGUI;
 import me.cedric.siegegame.model.map.GameMap;
@@ -20,7 +18,6 @@ import me.cedric.siegegame.player.kits.Kit;
 import me.cedric.siegegame.player.kits.PlayerKitManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
@@ -117,10 +114,7 @@ public class WorldGame {
     private void assignTeam(GamePlayer player, Team team) {
         team.addPlayer(player);
 
-        for (Team t : teams) {
-            TeamColor color = ColorUtil.getRelationalColor(team, t);
-            player.getBorderHandler().addBorder(t.getSafeArea(), color.getTransparentBlock());
-        }
+        teams.forEach(t -> player.getBorderHandler().addSafeZone(t));
 
         GameMap map = plugin.getGameManager().getCurrentMatch().getGameMap();
 
