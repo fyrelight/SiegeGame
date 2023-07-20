@@ -98,8 +98,8 @@ public class FakeBorderWall implements FakeBorder {
     }
 
     private void destroyWall(FakeBlockManager manager, World world, Wall wall) {
-        for (int xz = wall.minXZ; xz < wall.maxXZ; xz++) {
-            for (int y = wall.minY; y < wall.maxY; y++) {
+        for (int xz = wall.minXZ; xz <= wall.maxXZ; xz++) {
+            for (int y = wall.minY; y <= wall.maxY; y++) {
                 int x = wall.getX(xz);
                 int z = wall.getZ(xz);
                 manager.removeBlock(world, x, y, z);
@@ -174,8 +174,8 @@ public class FakeBorderWall implements FakeBorder {
     }
 
     protected void createWall(FakeBlockManager manager, World world , Wall wall) {
-        for (int xz = wall.minXZ; xz < wall.maxXZ; xz++) {
-            for (int y = wall.minY; y < wall.maxY; y++) {
+        for (int xz = wall.minXZ; xz <= wall.maxXZ; xz++) {
+            for (int y = wall.minY; y <= wall.maxY; y++) {
                 int x = wall.getX(xz);
                 int z = wall.getZ(xz);
                 manager.addBlock(material, world, x, y, z, border.blockChangesAllowed());
@@ -213,8 +213,8 @@ public class FakeBorderWall implements FakeBorder {
     }
 
     private void removeOldDiffY(FakeBlockManager manager, World world, Wall oldWall, int minY, int maxY) {
-        for(int xz = oldWall.minXZ; xz < oldWall.maxXZ;xz++) {
-            for (int y = minY; y < maxY; y++) {
+        for(int xz = oldWall.minXZ; xz <= oldWall.maxXZ;xz++) {
+            for (int y = minY; y <= maxY; y++) {
                 int x = oldWall.getX(xz);
                 int z = oldWall.getZ(xz);
                 manager.removeBlock(world, x, y, z);
@@ -223,8 +223,8 @@ public class FakeBorderWall implements FakeBorder {
     }
 
     private void addNewDiffY(FakeBlockManager manager, World world, Wall newWall, int minY, int maxY) {
-        for(int xz = newWall.minXZ; xz < newWall.maxXZ;xz++) {
-            for (int y = minY; y < maxY; y++) {
+        for(int xz = newWall.minXZ; xz <= newWall.maxXZ;xz++) {
+            for (int y = minY; y <= maxY; y++) {
                 int x = newWall.getX(xz);
                 int z = newWall.getZ(xz);
                 manager.addBlock(material,world, x, y, z, border.blockChangesAllowed());
@@ -233,8 +233,8 @@ public class FakeBorderWall implements FakeBorder {
     }
 
     private void addNewDiffXZ(FakeBlockManager manager, World world, Wall newWall, int minXZ, int maxXZ) {
-        for(int xz = minXZ; xz < maxXZ;xz++) {
-            for (int y = newWall.minY; y < newWall.maxY; y++) {
+        for(int xz = minXZ; xz <= maxXZ;xz++) {
+            for (int y = newWall.minY; y <= newWall.maxY; y++) {
                 int x = newWall.getX(xz);
                 int z = newWall.getZ(xz);
                 manager.addBlock(material,world, x, y, z, border.blockChangesAllowed());
@@ -243,8 +243,8 @@ public class FakeBorderWall implements FakeBorder {
     }
 
     private void removeDiffOldXZ(FakeBlockManager manager, World world, Wall oldWall, int minXZ, int maxXZ) {
-        for(int xz = minXZ; xz < maxXZ;xz++) {
-            for (int y = oldWall.minY; y < oldWall.maxY; y++) {
+        for(int xz = minXZ; xz <= maxXZ;xz++) {
+            for (int y = oldWall.minY; y <= oldWall.maxY; y++) {
                 int x = oldWall.getX(xz);
                 int z = oldWall.getZ(xz);
                 manager.removeBlock(world, x, y, z);
