@@ -9,20 +9,14 @@ import me.cedric.siegegame.model.teams.Team;
 import me.cedric.siegegame.player.GamePlayer;
 import me.cedric.siegegame.util.BoundingBox;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class FakeBorderSafeZone implements FakeBorder {
     private final Team team;
     private final TeamColor teamColor;
-    private final Material wallMaterial;
     private final Box box;
     private final GamePlayer gamePlayer;
     private final Border border;
@@ -34,7 +28,6 @@ public class FakeBorderSafeZone implements FakeBorder {
         this.border = team.getSafeArea();
         this.team = team;
         this.teamColor = ColorUtil.getRelationalColor(gamePlayer.getTeam(), team);
-        this.wallMaterial = teamColor.getTransparentBlock();
 
         BoundingBox borderBox = border.getBoundingBox();
         int minX = (int) borderBox.getMinX();
@@ -54,12 +47,9 @@ public class FakeBorderSafeZone implements FakeBorder {
 
     @Override
     public void update() {
-        boolean destroy = false;
-        boolean update = false;
-
-        if (shouldDisplay(border, gamePlayer)) {
+        if (shouldDisplay(gamePlayer)) {
             if (wallVisible) {
-                // Exists; undraw and redraw
+                // Exists; remove and redraw
                 draw();
                 return;
             }
@@ -68,7 +58,7 @@ public class FakeBorderSafeZone implements FakeBorder {
             create();
         } else {
             if (!wallVisible) {
-                // Exists; undraw and redraw
+                // Exists; remove and redraw
                 drawFloor();
                 return;
             }
@@ -78,22 +68,8 @@ public class FakeBorderSafeZone implements FakeBorder {
         }
     }
 
-    private void updateBox(BoundingBox borderBox) {
-        List<Wall> oldWalls = new ArrayList<>(box.walls);
-        box.walls.clear();
-
-        Floor oldCeiling = box.ceiling;
-        Floor oldFloor = box.floor;
-        box.ceiling = null;
-
-        createWalls();
-        createCeiling();
-
-        drawUpdate(oldWalls,box.walls,oldCeiling,box.ceiling,oldFloor,box.floor);
-    }
-
-    private boolean shouldDisplay(Border border, GamePlayer gamePlayer) {
-        if (this.team != gamePlayer.getTeam()) return true;
+    private boolean shouldDisplay(GamePlayer gamePlayer) {
+        if (this.team.getPlayers().contains(gamePlayer)) return true;
         return combatManager.isInCombat(gamePlayer.getBukkitPlayer());
     }
 
@@ -161,14 +137,14 @@ public class FakeBorderSafeZone implements FakeBorder {
         FakeBlockManager fakeBlockManager = gamePlayer.getFakeBlockManager();
         World world = gamePlayer.getBukkitPlayer().getWorld();
 
-        //Undraw
+        //Remove
         box.walls.forEach(wall -> destroyWall(fakeBlockManager, world, wall));
         destroyFloor(fakeBlockManager, world, box.ceiling);
         destroyFloor(fakeBlockManager, world, box.floor);
 
         //Redraw
         for (Wall wall : box.walls) {
-            drawWall(fakeBlockManager,world,wall,false);
+            drawWall(fakeBlockManager,world,wall);
         }
         drawFloor(fakeBlockManager,world,box.ceiling, teamColor.getTransparentBlock(), false);
         drawFloor(fakeBlockManager,world,box.floor, teamColor.getSolidBlock(), true);
@@ -180,7 +156,7 @@ public class FakeBorderSafeZone implements FakeBorder {
         FakeBlockManager fakeBlockManager = gamePlayer.getFakeBlockManager();
         World world = gamePlayer.getBukkitPlayer().getWorld();
 
-        //Undraw
+        //Remove
         destroyFloor(fakeBlockManager, world, box.floor);
 
         //Redraw
@@ -200,31 +176,14 @@ public class FakeBorderSafeZone implements FakeBorder {
         }
     }
 
-    private void drawWall(FakeBlockManager manager, World world , Wall wall, boolean replaceSolid) {
+    private void drawWall(FakeBlockManager manager, World world , Wall wall) {
         for (int xz = wall.minXZ; xz <= wall.maxXZ; xz++) {
             for (int y = wall.minY; y <= wall.maxY; y++) {
                 int x = wall.getX(xz);
                 int z = wall.getZ(xz);
-                if (!replaceSolid && world.getBlockAt(x, y, z).isSolid())
-                    continue;
                 manager.addBlock(teamColor.getTransparentBlock(), world, x, y, z, border.blockChangesAllowed());
             }
         }
-    }
-
-    private void drawUpdate(List<Wall> oldWalls, List<Wall> newWalls, Floor oldCeiling, Floor newCeiling, Floor oldFloor, Floor newFloor) {
-        //new walls
-        World world = gamePlayer.getBukkitPlayer().getWorld();
-        FakeBlockManager manager = gamePlayer.getFakeBlockManager();
-
-        for(Wall newWall : newWalls) {
-            drawWall(manager,world,newWall,false);
-        }
-
-        drawFloor(manager,world,newCeiling, teamColor.getTransparentBlock(),false);
-        drawFloor(manager,world,newFloor, teamColor.getSolidBlock(),true);
-
-        manager.update();
     }
 
     @Override
