@@ -1,13 +1,11 @@
 package me.cedric.siegegame.player.border;
 
-import me.cedric.siegegame.SiegeGamePlugin;
 import me.cedric.siegegame.display.ColorUtil;
 import me.cedric.siegegame.display.TeamColor;
 import me.cedric.siegegame.fake.FakeBlockManager;
 import me.cedric.siegegame.model.teams.Team;
 import me.cedric.siegegame.player.GamePlayer;
 import me.cedric.siegegame.util.BoundingBox;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -86,7 +84,8 @@ public class FakeBorderSafeZone implements FakeBorder {
         box.floor = null;
 
         createWalls();
-        createFloors();
+        createFloor();
+        createCeiling();
 
         drawUpdate(oldWalls,box.walls,oldCeiling,box.ceiling,oldFloor,box.floor);
     }
@@ -136,12 +135,16 @@ public class FakeBorderSafeZone implements FakeBorder {
         box.ceiling = null;
         box.floor = null;
         createWalls();
-        createFloors();
+        createFloor();
+        createCeiling();
         draw();
     }
 
-    private void createFloors() {
+    private void createCeiling() {
         box.ceiling = new Floor(box.minX, box.maxX, box.minZ, box.maxZ, box.maxY);
+    }
+
+    private void createFloor() {
         box.floor = new Floor(box.minX, box.maxX, box.minZ, box.maxZ, box.minY);
     }
 
