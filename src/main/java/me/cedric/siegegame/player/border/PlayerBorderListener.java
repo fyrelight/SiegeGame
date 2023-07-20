@@ -190,7 +190,7 @@ public class PlayerBorderListener implements Listener {
         if (border.getBoundingBox().isColliding(location))
             return !border.isInverse();
 
-        // If we get here player is outside any borders and should be teleported to last safe
+        // If we get here player is outside the border, this is good if it is an inverse border
         return border.isInverse();
     }
 
