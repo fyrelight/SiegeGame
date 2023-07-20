@@ -58,8 +58,8 @@ public class FakeBorderSafeZone implements FakeBorder {
             create();
         } else {
             if (!wallVisible) {
-                // Exists; remove and redraw
-                drawFloor();
+                // Doesn't exist; create and draw
+                createFloor();
                 return;
             }
             wallVisible = false;
@@ -69,7 +69,9 @@ public class FakeBorderSafeZone implements FakeBorder {
     }
 
     private boolean shouldDisplay(GamePlayer gamePlayer) {
+        Bukkit.getLogger().info("Checking if should display for " + gamePlayer.getBukkitPlayer().getName());
         if (this.team.getPlayers().contains(gamePlayer)) return true;
+        Bukkit.getLogger().info("Player is not in team " + team.getName());
         return combatManager.isInCombat(gamePlayer.getBukkitPlayer());
     }
 
@@ -80,11 +82,13 @@ public class FakeBorderSafeZone implements FakeBorder {
 
         box.walls.forEach(wall -> destroyWall(fakeBlockManager, world, wall));
         destroyFloor(fakeBlockManager, world, box.ceiling);
+        destroyFloor(fakeBlockManager, world, box.floor);
 
         box.walls.clear();
         box.ceiling = null;
+        box.floor = null;
 
-        drawFloor();
+        createFloor();
 
         fakeBlockManager.update();
     }
@@ -124,6 +128,7 @@ public class FakeBorderSafeZone implements FakeBorder {
 
     private void createFloor() {
         box.floor = new Floor(box.minX, box.maxX, box.minZ, box.maxZ, box.minY);
+        drawFloor();
     }
 
     private void createWalls() {
@@ -178,7 +183,7 @@ public class FakeBorderSafeZone implements FakeBorder {
 
     private void drawWall(FakeBlockManager manager, World world , Wall wall) {
         for (int xz = wall.minXZ; xz <= wall.maxXZ; xz++) {
-            for (int y = wall.minY; y <= wall.maxY; y++) {
+            for (int y = wall.minY + 1; y < wall.maxY; y++) {
                 int x = wall.getX(xz);
                 int z = wall.getZ(xz);
                 manager.addBlock(teamColor.getTransparentBlock(), world, x, y, z, border.blockChangesAllowed());
