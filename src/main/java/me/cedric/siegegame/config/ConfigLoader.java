@@ -317,7 +317,6 @@ public class ConfigLoader implements GameConfig {
             int y2 = spawnAreaSection.getInt(MAPS_SECTION_TEAMS_SPAWN_Y2);
             int z2 = spawnAreaSection.getInt(MAPS_SECTION_TEAMS_SPAWN_Z2);
             Border safeArea = new Border(new BoundingBox(null, x1, y1, z1, x2, y2, z2));
-            safeArea.setCanLeave(true);
             safeArea.setAllowBlockChanges(false);
             safeArea.setInverse(true);
 
