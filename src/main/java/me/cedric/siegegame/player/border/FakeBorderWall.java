@@ -152,7 +152,6 @@ public class FakeBorderWall implements FakeBorder {
         return null;
     }
 
-    @Override
     public void create() {
         WallProjection wallProjection = projectXZ(border.getBoundingBox(), gamePlayer.getBukkitPlayer().getLocation());
 
@@ -256,8 +255,8 @@ public class FakeBorderWall implements FakeBorder {
         if (wallCount >= 4)
             return;
 
-        int borderMinXZ = 0;
-        int borderMaxXZ = 0;
+        int borderMinXZ;
+        int borderMaxXZ;
 
         //get the x or z coordinate of the wall
         int minXZ = xz - width;
@@ -384,14 +383,6 @@ public class FakeBorderWall implements FakeBorder {
         double dx = x - xx;
         double dy = y - yy;
         return dx * dx + dy * dy;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
     }
 
     @Override

@@ -9,7 +9,6 @@ import me.cedric.siegegame.model.teams.Team;
 import me.cedric.siegegame.player.GamePlayer;
 import me.cedric.siegegame.util.BoundingBox;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.World;
 
 import java.util.Objects;
@@ -18,10 +17,10 @@ public class FakeBorderSafeZone implements FakeBorder {
     private final Team team;
     private final TeamColor teamColor;
     private final Box box;
+    private final Floor floor;
     private final GamePlayer gamePlayer;
     private final Border border;
     private final ICombatManager combatManager;
-    private boolean wallVisible;
 
     public FakeBorderSafeZone(GamePlayer gamePlayer, Team team) {
         this.gamePlayer = gamePlayer;
@@ -37,8 +36,8 @@ public class FakeBorderSafeZone implements FakeBorder {
         int minY = (int) borderBox.getMinY();
         int maxY = (int) borderBox.getMaxY();
 
-        this.box = new Box(minX, maxX, minZ, maxZ, minY, maxY);
-        createFloor();
+        this.box = new Box(minX, maxX, minZ, maxZ, minY + 1, maxY);
+        this.floor = new Floor(minX, maxX, minZ, maxZ, minY);
 
         ICombatLogX combatLogX = (ICombatLogX) Bukkit.getPluginManager().getPlugin("CombatLogX");
         this.combatManager = Objects.requireNonNull(combatLogX).getCombatManager();
@@ -48,22 +47,8 @@ public class FakeBorderSafeZone implements FakeBorder {
     @Override
     public void update() {
         if (shouldDisplay(gamePlayer)) {
-            if (wallVisible) {
-                // Exists; remove and redraw
-                draw();
-                return;
-            }
-            wallVisible = true;
-            //Doesn't exist; create and draw
-            create();
+            draw();
         } else {
-            if (!wallVisible) {
-                // Doesn't exist; create and draw
-                createFloor();
-                return;
-            }
-            wallVisible = false;
-            // Exists; destroy and drawFloor
             destroy();
         }
     }
@@ -78,109 +63,50 @@ public class FakeBorderSafeZone implements FakeBorder {
         FakeBlockManager fakeBlockManager = gamePlayer.getFakeBlockManager();
         World world = gamePlayer.getBukkitPlayer().getWorld();
 
-        box.walls.forEach(wall -> destroyWall(fakeBlockManager, world, wall));
-        destroyFloor(fakeBlockManager, world, box.ceiling);
-        destroyFloor(fakeBlockManager, world, box.floor);
+        //Destroy
+        destroyBox(fakeBlockManager, world, box);
 
-        box.walls.clear();
-        box.ceiling = null;
-        box.floor = null;
+        //Redraw
+        drawFloor(fakeBlockManager, world, floor);
 
-        createFloor();
+        fakeBlockManager.update();
     }
 
-    private void destroyFloor(FakeBlockManager manager, World world, Floor floor) {
-        for (int x = floor.minX; x <= floor.maxX; x++) {
-            for (int z = floor.minZ; z <= floor.maxZ; z++) {
-                manager.removeBlock(world, x, floor.y, z);
+    private void destroyBox(FakeBlockManager manager, World world, Box box) {
+        for (int x = box.minX; x <= box.maxX; x++) {
+            for (int y = box.minY; y <= box.maxY; y++) {
+                for (int z = box.minZ; z <= box.maxZ; z++) {
+                    manager.removeBlock(world, x, y, z);
+                }
             }
         }
-    }
-
-    private void destroyWall(FakeBlockManager manager, World world, Wall wall) {
-        for (int xz = wall.minXZ; xz <= wall.maxXZ; xz++) {
-            for (int y = wall.minY; y <= wall.maxY; y++) {
-                int x = wall.getX(xz);
-                int z = wall.getZ(xz);
-                manager.removeBlock(world, x, y, z);
-            }
-        }
-    }
-
-    @Override
-    public void create() {
-        box.walls.clear();
-        box.ceiling = null;
-        box.floor = null;
-        createWalls();
-        createCeiling();
-        createFloor();
-        draw();
-    }
-
-    private void createCeiling() {
-        box.ceiling = new Floor(box.minX, box.maxX, box.minZ, box.maxZ, box.maxY);
-    }
-
-    private void createFloor() {
-        box.floor = new Floor(box.minX, box.maxX, box.minZ, box.maxZ, box.minY);
-        drawFloor();
-    }
-
-    private void createWalls() {
-        box.walls.add(new Wall(box.minX, box.maxX, box.minZ, box.minY, box.maxY, true, true));
-        box.walls.add(new Wall(box.minX, box.maxX, box.maxZ, box.minY, box.maxY, true, false));
-        box.walls.add(new Wall(box.minZ, box.maxZ, box.minX, box.minY, box.maxY, false, true));
-        box.walls.add(new Wall(box.minZ, box.maxZ, box.maxX, box.minY, box.maxY, false, false));
     }
 
     private void draw() {
         FakeBlockManager fakeBlockManager = gamePlayer.getFakeBlockManager();
         World world = gamePlayer.getBukkitPlayer().getWorld();
 
-        //Remove
-        box.walls.forEach(wall -> destroyWall(fakeBlockManager, world, wall));
-        destroyFloor(fakeBlockManager, world, box.ceiling);
-        destroyFloor(fakeBlockManager, world, box.floor);
-
         //Redraw
-        box.walls.forEach(wall -> drawWall(fakeBlockManager, world, wall));
-        drawFloor(fakeBlockManager,world,box.ceiling, teamColor.getTransparentBlock(), false);
-        drawFloor(fakeBlockManager,world,box.floor, teamColor.getSolidBlock(), true);
+        drawBox(fakeBlockManager, world, box);
+        drawFloor(fakeBlockManager, world, floor);
 
         fakeBlockManager.update();
     }
 
-    private void drawFloor() {
-        FakeBlockManager fakeBlockManager = gamePlayer.getFakeBlockManager();
-        World world = gamePlayer.getBukkitPlayer().getWorld();
-
-        //Remove
-        destroyFloor(fakeBlockManager, world, box.floor);
-
-        //Redraw
-        drawFloor(fakeBlockManager,world,box.floor, teamColor.getSolidBlock(), true);
-
-        fakeBlockManager.update();
-    }
-
-    private void drawFloor(FakeBlockManager manager, World world, Floor floor, Material material, boolean replaceSolid) {
+    private void drawFloor(FakeBlockManager manager, World world, Floor floor) {
         for (int x = floor.minX; x <= floor.maxX; x++) {
             for (int z = floor.minZ; z <= floor.maxZ; z++) {
-                int y = floor.y;
-                if (!replaceSolid && world.getBlockAt(x, y, z).isSolid())
-                    continue;
-                manager.addBlock(material, world, x, y, z, border.blockChangesAllowed());
+                manager.addBlock(teamColor.getSolidBlock(), world, x, floor.y, z, border.blockChangesAllowed());
             }
         }
     }
 
-    private void drawWall(FakeBlockManager manager, World world , Wall wall) {
-        for (int xz = wall.minXZ; xz <= wall.maxXZ; xz++) {
-            for (int y = wall.minY + 1; y < wall.maxY; y++) {
-                int x = wall.getX(xz);
-                int z = wall.getZ(xz);
-                manager.addBlock(teamColor.getTransparentBlock(), world, x, y, z, border.blockChangesAllowed());
+    private void drawBox(FakeBlockManager manager, World world, Box box) {
+        for (int x = box.minX; x <= box.maxX; x++) {
+            for (int y = box.minY; y <= box.maxY; y++) {
+                for (int z = box.minZ; z <= box.maxZ; z++) {
+                    manager.addBlock(teamColor.getTransparentBlock(), world, x, y, z, border.blockChangesAllowed());
+                }
             }
         }
     }
