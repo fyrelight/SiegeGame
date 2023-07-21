@@ -6,7 +6,6 @@ import me.cedric.siegegame.enums.Permissions;
 import me.cedric.siegegame.model.SiegeGameMatch;
 import me.cedric.siegegame.player.GamePlayer;
 import me.cedric.siegegame.player.border.blockers.ProjectileFollowTask;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -152,10 +151,15 @@ public class PlayerBorderListener implements Listener {
 
         PlayerBorderHandler handler = gamePlayer.getBorderHandler();
 
-        if (handler.getBorders().stream().anyMatch(border -> !analyseMove(event.getTo(), border, gamePlayer)))
-            rollback(gamePlayer);
-        else // Only set last position IF it is good rather than always doing it. This ensures this because you either roll the person back or they are safe
+        List<Border> affectedBorders = handler.getBorders().stream().filter(border -> isAffected(event.getTo(), border)).toList();
+
+        if (affectedBorders.isEmpty()) {
+            // Only set last position IF it can never be affected by a border. This ensures they are never rolled back to somewhere they can't be
             gamePlayer.getBorderHandler().getEntityTracker().setLastPosition(event.getPlayer().getUniqueId(), event.getTo().clone());
+        } else if (affectedBorders.stream().anyMatch(border -> !border.canLeave(gamePlayer))) {
+            // If they are affected by a border that they can't leave, rollback
+            rollback(gamePlayer);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -181,10 +185,7 @@ public class PlayerBorderListener implements Listener {
         followTask.runTaskTimer(plugin, 0, 1);
     }
 
-    private boolean analyseMove(Location location, Border border, GamePlayer gamePlayer) {
-        if (border.canLeave(gamePlayer)) // if you can leave the border, movement is always good
-            return true;
-
+    private boolean isAffected(Location location, Border border) {
         // If you are inside a border and it is not inverse (regular border), movement is good
         // Otherwise, you are inside an inverse border, movement is bad
         if (border.getBoundingBox().isColliding(location))
