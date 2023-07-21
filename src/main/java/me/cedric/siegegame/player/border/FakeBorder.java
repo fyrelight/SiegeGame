@@ -1,14 +1,10 @@
 package me.cedric.siegegame.player.border;
 
-import org.bukkit.Material;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public interface FakeBorder {
     void update();
     void destroy();
-    void create();
     Border getBorder();
     final class WallProjection {
         final int XZ;
@@ -53,9 +49,6 @@ public interface FakeBorder {
         final int maxZ;
         final int minY;
         final int maxY;
-        Floor floor;
-        Floor ceiling;
-        final List<Wall> walls;
 
         Box(int minX, int maxX, int minZ, int maxZ, int minY, int maxY) {
             this.minX = minX;
@@ -64,14 +57,6 @@ public interface FakeBorder {
             this.maxZ = maxZ;
             this.minY = minY;
             this.maxY = maxY;
-            this.walls = new ArrayList<>();;
-        }
-
-        private void createWalls() {
-            walls.add(new Wall(minX, maxX, minZ, minY + 1, maxY - 1, true, true));
-            walls.add(new Wall(minX, maxX, maxZ, minY + 1, maxY - 1, true, false));
-            walls.add(new Wall(minZ, maxZ, minX, minY + 1, maxY - 1, false, true));
-            walls.add(new Wall(minZ, maxZ, maxX, minY + 1, maxY - 1, false, false));
         }
 
         public int getMinX() {
