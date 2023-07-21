@@ -88,9 +88,9 @@ public class Displayer {
         TextComponent textComponent = Component.text("")
                 .color(TextColor.color(88, 140, 252))
                 .append(Component.text(Messages.PREFIX.toString())
-                .append(Component.text( killer.getName(), ColorUtil.getRelationalColor(gamePlayer.getTeam(), killerTeam).getTextColor())
+                .append(Component.text(killer.getName(), ColorUtil.getRelationalColor(gamePlayer.getTeam(), killerTeam).getTextColor())
                 .append(Component.text(" has killed ", TextColor.color(252, 252, 53)))
-                .append(Component.text(dead.getBukkitPlayer().getName(), ColorUtil.getRelationalColor(gamePlayer.getTeam(), dead.getTeam()).getTextColor()))
+                .append(Component.text(dead.getBukkitPlayer().getName() + " ", ColorUtil.getRelationalColor(gamePlayer.getTeam(), dead.getTeam()).getTextColor()))
                 .append(Component.text(killerTeam.getName() + ": ", TextColor.color(255, 194, 97)))
                 .append(Component.text("+" + plugin.getGameConfig().getPointsPerKill() + " points ", TextColor.color(255, 73, 23)))));
 
