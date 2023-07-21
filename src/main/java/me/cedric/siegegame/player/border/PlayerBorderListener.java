@@ -158,7 +158,7 @@ public class PlayerBorderListener implements Listener {
             gamePlayer.getBorderHandler().getEntityTracker().setLastPosition(event.getPlayer().getUniqueId(), event.getTo().clone());
         } else if (affectedBorders.stream().anyMatch(border -> !border.canLeave(gamePlayer))) {
             // If they are affected by a border that they can't leave, rollback
-            rollback(gamePlayer);
+            rollback(gamePlayer, gameMatch);
         }
     }
 
@@ -195,9 +195,14 @@ public class PlayerBorderListener implements Listener {
         return border.isInverse();
     }
 
-    private void rollback(GamePlayer player) {
+    private void rollback(GamePlayer player, SiegeGameMatch match) {
         EntityTracker entityTracker = player.getBorderHandler().getEntityTracker();
-        player.getBukkitPlayer().teleport(entityTracker.getLastPosition(player.getUUID()));
+        Location location = entityTracker.getLastPosition(player.getUUID());
+        if (location == null) {
+            if (player.getTeam().getSafeArea().canLeave(player)) location = player.getTeam().getSafeSpawn();
+            else location = match.getGameMap().getDefaultSpawn();
+        }
+        player.getBukkitPlayer().teleport(location);
         player.getBukkitPlayer().sendMessage(ChatColor.RED + "You have been rolled back for getting through a border.");
     }
 
