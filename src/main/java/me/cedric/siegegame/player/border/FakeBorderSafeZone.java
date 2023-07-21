@@ -9,6 +9,7 @@ import me.cedric.siegegame.model.teams.Team;
 import me.cedric.siegegame.player.GamePlayer;
 import me.cedric.siegegame.util.BoundingBox;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 
 import java.util.Objects;
@@ -21,6 +22,7 @@ public class FakeBorderSafeZone implements FakeBorder {
     private final GamePlayer gamePlayer;
     private final Border border;
     private final ICombatManager combatManager;
+    private boolean isVisible;
 
     public FakeBorderSafeZone(GamePlayer gamePlayer, Team team) {
         this.gamePlayer = gamePlayer;
@@ -47,8 +49,12 @@ public class FakeBorderSafeZone implements FakeBorder {
     @Override
     public void update() {
         if (shouldDisplay(gamePlayer)) {
+            //if (isVisible) return;
+            //isVisible = true;
             draw();
         } else {
+            //if (!isVisible) return;
+            //isVisible = false;
             destroy();
         }
     }
@@ -65,11 +71,20 @@ public class FakeBorderSafeZone implements FakeBorder {
 
         //Destroy
         destroyBox(fakeBlockManager, world, box);
+        destroyFloor(fakeBlockManager, world, floor);
 
         //Redraw
         drawFloor(fakeBlockManager, world, floor);
 
         fakeBlockManager.update();
+    }
+
+    private void destroyFloor(FakeBlockManager manager, World world, Floor floor) {
+        for (int x = floor.minX; x <= floor.maxX; x++) {
+            for (int z = floor.minZ; z <= floor.maxZ; z++) {
+                manager.removeBlock(world, x, floor.y, z);
+            }
+        }
     }
 
     private void destroyBox(FakeBlockManager manager, World world, Box box) {
@@ -86,6 +101,9 @@ public class FakeBorderSafeZone implements FakeBorder {
         FakeBlockManager fakeBlockManager = gamePlayer.getFakeBlockManager();
         World world = gamePlayer.getBukkitPlayer().getWorld();
 
+        destroyBox(fakeBlockManager, world, box);
+        destroyFloor(fakeBlockManager, world, floor);
+
         //Redraw
         drawBox(fakeBlockManager, world, box);
         drawFloor(fakeBlockManager, world, floor);
@@ -96,7 +114,7 @@ public class FakeBorderSafeZone implements FakeBorder {
     private void drawFloor(FakeBlockManager manager, World world, Floor floor) {
         for (int x = floor.minX; x <= floor.maxX; x++) {
             for (int z = floor.minZ; z <= floor.maxZ; z++) {
-                manager.addBlock(teamColor.getSolidBlock(), world, x, floor.y, z, border.blockChangesAllowed());
+                manager.addBlock(teamColor.getSolidBlock(), world, x, floor.y, z, true);
             }
         }
     }
@@ -105,7 +123,7 @@ public class FakeBorderSafeZone implements FakeBorder {
         for (int x = box.minX; x <= box.maxX; x++) {
             for (int y = box.minY; y <= box.maxY; y++) {
                 for (int z = box.minZ; z <= box.maxZ; z++) {
-                    manager.addBlock(teamColor.getTransparentBlock(), world, x, y, z, border.blockChangesAllowed());
+                    manager.addBlock(teamColor.getTransparentBlock(), world, x, y, z, true);
                 }
             }
         }
