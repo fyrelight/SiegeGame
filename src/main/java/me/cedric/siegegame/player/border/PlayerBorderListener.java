@@ -189,10 +189,10 @@ public class PlayerBorderListener implements Listener {
         // If you are inside a border and it is not inverse (regular border), movement is good
         // Otherwise, you are inside an inverse border, movement is bad
         if (border.getBoundingBox().isColliding(location))
-            return !border.isInverse();
+            return border.isInverse();
 
         // If we get here player is outside the border, this is good if it is an inverse border
-        return border.isInverse();
+        return !border.isInverse();
     }
 
     private void rollback(GamePlayer player, SiegeGameMatch match) {
