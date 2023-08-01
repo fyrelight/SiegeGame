@@ -1,5 +1,6 @@
 package me.cedric.siegegame.display.shop;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class ShopItem implements Buyable {
@@ -10,14 +11,16 @@ public class ShopItem implements Buyable {
     private final ItemStack displayItem;
     private final boolean includesItem;
     private final boolean includesNBT;
+    private String itemID;
 
-    public ShopItem(Purchase purchase, ItemStack displayItem, int price, int slot, boolean includesItem, boolean includesNBT) {
+    public ShopItem(Purchase purchase, String itemID, ItemStack displayItem, int price, int slot, boolean includesItem, boolean includesNBT) {
         this.purchase = purchase;
         this.price = price;
         this.slot = slot;
         this.includesItem = includesItem;
         this.includesNBT = includesNBT;
         this.displayItem = displayItem;
+        this.itemID = itemID;
     }
 
     @Override
@@ -46,4 +49,9 @@ public class ShopItem implements Buyable {
     public boolean includesNBT() {
         return includesNBT;
     }
+
+    public String getIdentifier() {
+        return itemID;
+    }
+
 }

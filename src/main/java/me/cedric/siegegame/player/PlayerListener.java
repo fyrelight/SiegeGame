@@ -76,8 +76,7 @@ public class PlayerListener implements Listener {
         player.setLevel(0);
         player.sendMessage(ChatColor.GOLD + "Welcome to fyrelight.uk! Use " + ChatColor.YELLOW + "/resources" + ChatColor.GOLD + " for gear.");
 
-        String currentMap = match == null ? null : match.getWorldGame().getMapIdentifier();
-        plugin.getGameManager().getKitStorage().load(player, currentMap);
+        plugin.getGameManager().getKitStorage().load(player, match == null ? null : match.getWorldGame());
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
