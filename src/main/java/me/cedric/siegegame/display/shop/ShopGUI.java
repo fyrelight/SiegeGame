@@ -68,4 +68,8 @@ public class ShopGUI {
         return chestGui;
     }
 
+    public ShopItem getItem(String id) {
+        return shopItems.stream().filter(shopItem -> shopItem.getIdentifier().equalsIgnoreCase(id)).findAny().orElse(null);
+    }
+
 }
