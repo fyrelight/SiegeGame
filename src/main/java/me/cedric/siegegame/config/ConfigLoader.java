@@ -291,7 +291,7 @@ public class ConfigLoader implements GameConfig {
                 for (String command : commands) {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
                 }
-            }, key, nbtItem.getItem().clone(), price, slot, includesItemExact);
+            }, key, nbtItem.getItem().clone(), price, slot, includesItem, includesItemExact);
 
             shopItems.add(button);
         }
