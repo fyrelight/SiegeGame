@@ -35,7 +35,7 @@ public class RallyCommand extends FunctionalCommand {
 
         if (!(executor instanceof Player player)) return;
 
-        if (!LunarClientAPI.getInstance().isRunningLunarClient(player.getUniqueId())) {
+        if (!LunarClientModule.isLunarClient(player.getUniqueId())) {
             player.sendMessage(Messages.ERROR_REQUIRES_LUNAR_CLIENT);
             return;
         }
@@ -51,7 +51,7 @@ public class RallyCommand extends FunctionalCommand {
         if (gamePlayer == null || !gamePlayer.hasTeam())
             return;
 
-        LunarClientSupport.sendTemporaryWaypoint(plugin, gamePlayer.getTeam(), player.getLocation(), 30 * 20);
+        WaypointSender.sendTemporaryWaypoint(plugin, gamePlayer.getTeam(), player.getLocation(), "Rally", 30 * 20);
         player.sendMessage(Messages.COMMAND_RALLY_SET);
     }
 }
