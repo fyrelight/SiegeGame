@@ -1,17 +1,13 @@
 package me.cedric.siegegame.player.border;
 
-import com.github.sirblobman.combatlogx.api.ICombatLogX;
-import com.github.sirblobman.combatlogx.api.manager.ICombatManager;
 import me.cedric.siegegame.display.ColorUtil;
 import me.cedric.siegegame.display.TeamColor;
 import me.cedric.siegegame.fake.FakeBlockManager;
 import me.cedric.siegegame.model.teams.Team;
 import me.cedric.siegegame.player.GamePlayer;
 import me.cedric.siegegame.util.BoundingBox;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 
-import java.util.Objects;
 
 public class FakeBorderSafeZone implements FakeBorder {
     private final Team team;
@@ -20,7 +16,6 @@ public class FakeBorderSafeZone implements FakeBorder {
     private final Floor floor;
     private final GamePlayer gamePlayer;
     private final Border border;
-    private final ICombatManager combatManager;
     private boolean isVisible;
 
     public FakeBorderSafeZone(GamePlayer gamePlayer, Team team) {
@@ -39,9 +34,6 @@ public class FakeBorderSafeZone implements FakeBorder {
 
         this.box = new Box(minX, maxX, minZ, maxZ, minY + 1, maxY);
         this.floor = new Floor(minX, maxX, minZ, maxZ, minY);
-
-        ICombatLogX combatLogX = (ICombatLogX) Bukkit.getPluginManager().getPlugin("CombatLogX");
-        this.combatManager = Objects.requireNonNull(combatLogX).getCombatManager();
     }
 
 
