@@ -1,12 +1,12 @@
 package me.cedric.siegegame.command;
 
-import com.lunarclient.bukkitapi.LunarClientAPI;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import me.cedric.siegegame.SiegeGamePlugin;
 import me.cedric.siegegame.enums.Messages;
 import me.cedric.siegegame.model.SiegeGameMatch;
 import me.cedric.siegegame.model.game.WorldGame;
-import me.cedric.siegegame.modules.lunarclient.LunarClientSupport;
+import me.cedric.siegegame.modules.lunarclient.LunarClientModule;
+import me.cedric.siegegame.modules.lunarclient.WaypointSender;
 import me.cedric.siegegame.player.GamePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;

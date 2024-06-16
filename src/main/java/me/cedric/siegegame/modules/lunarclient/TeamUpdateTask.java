@@ -5,7 +5,7 @@ import com.lunarclient.apollo.common.location.ApolloLocation;
 import com.lunarclient.apollo.module.team.TeamMember;
 import com.lunarclient.apollo.module.team.TeamModule;
 import me.cedric.siegegame.model.game.WorldGame;
-import me.cedric.siegegame.model.player.GamePlayer;
+import me.cedric.siegegame.player.GamePlayer;
 import me.cedric.siegegame.model.teams.Team;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
