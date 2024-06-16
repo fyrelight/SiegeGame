@@ -1,33 +1,46 @@
 package me.cedric.siegegame.command.args;
 
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import me.cedric.siegegame.SiegeGamePlugin;
+import me.cedric.siegegame.command.FunctionalCommand;
+import me.cedric.siegegame.enums.Messages;
 import me.cedric.siegegame.model.SiegeGameMatch;
 import me.cedric.siegegame.model.game.Module;
 import me.cedric.siegegame.modules.capturepoint.ControlAreaModule;
 import me.cedric.siegegame.modules.capturepoint.Cuboid;
 import me.cedric.siegegame.modules.capturepoint.EffectControlArea;
 import me.cedric.siegegame.modules.capturepoint.Vector3D;
-import me.deltaorion.common.command.CommandException;
-import me.deltaorion.common.command.FunctionalCommand;
-import me.deltaorion.common.command.sent.SentCommand;
-import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
 public class SpawnControlArea extends FunctionalCommand {
 
     private final SiegeGamePlugin plugin;
 
     public SpawnControlArea(SiegeGamePlugin plugin) {
-        super("siegegame.admin.spawncontrolarea");
+        //super("siegegame.admin.spawncontrolarea");
         this.plugin = plugin;
     }
 
     @Override
-    public void commandLogic(SentCommand sentCommand) throws CommandException {
+    public void commandLogic(@NotNull CommandSourceStack commandSourceStack, String[] args) {
+        CommandSender sender = commandSourceStack.getSender();
+
+        if (!sender.hasPermission("siegegame.admin.spawncontrolarea")) {
+            sender.sendMessage(Messages.ERROR_REQUIRES_PERMISSION);
+            return;
+        }
+
+        Entity executor = commandSourceStack.getExecutor();
+        if (executor == null) return;
+
+        if (!(executor instanceof Player player)) return;
+
         SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
-        Player player = Bukkit.getPlayer(sentCommand.getSender().getUniqueId());
 
         Vector3D p1 = Vector3D.getFromPlayerLocation(player.getLocation().clone());
         Vector3D p2 = Vector3D.getFromPlayerLocation(player.getLocation().clone());

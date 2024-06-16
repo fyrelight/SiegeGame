@@ -7,9 +7,10 @@ import me.cedric.siegegame.player.GamePlayer;
 import me.cedric.siegegame.player.kits.Kit;
 import me.cedric.siegegame.player.kits.KitStorage;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -102,9 +103,10 @@ public class DeathManager {
 
         respawnTask.start();
 
-        String title = ChatColor.translateAlternateColorCodes('&', "&4&lYOU DIED!");
-        String subtitle = ChatColor.translateAlternateColorCodes('&', "&cYou will respawn in " + plugin.getGameConfig().getRespawnTimer() + " seconds");
-        player.showTitle(Title.title(Component.text(title), Component.text(subtitle)));
+        player.showTitle(Title.title(
+                Component.text("YOU DIED!").color(NamedTextColor.DARK_RED).decorate(TextDecoration.BOLD),
+                Component.text("You will respawn in " + plugin.getGameConfig().getRespawnTimer() + " seconds").color(NamedTextColor.RED)
+        ));
 
         gamePlayer.setDead(true);
         Bukkit.getScheduler().runTaskLater(plugin, gamePlayer::grantNightVision, 10);

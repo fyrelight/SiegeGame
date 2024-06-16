@@ -2,11 +2,14 @@ package me.cedric.siegegame.player;
 
 import com.github.sirblobman.combatlogx.api.manager.ICombatManager;
 import me.cedric.siegegame.SiegeGamePlugin;
+import me.cedric.siegegame.display.shop.ShopGUI;
+import me.cedric.siegegame.display.shop.ShopItem;
+import me.cedric.siegegame.enums.Messages;
+import me.cedric.siegegame.model.game.WorldGame;
 import me.cedric.siegegame.util.BoundingBox;
 import me.cedric.siegegame.model.SiegeGameMatch;
 import me.cedric.siegegame.model.teams.Team;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,6 +23,9 @@ import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 
 public class PlayerListener implements Listener {
@@ -30,25 +36,60 @@ public class PlayerListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
-        if (!event.isCancelled()) return;
         if (!(event.getWhoClicked() instanceof Player player)) return;
 
         SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
         if (match == null) return;
 
+        WorldGame worldGame = match.getWorldGame();
+        ShopGUI shopGUI = worldGame.getShopGUI();
+
+        if (event.getClickedInventory() == null) return;
+        if (!shopGUI.isInventory(event.getInventory())) return;
+
         Inventory playerInventory = player.getInventory();
-        if (event.getClickedInventory() == null || !event.getClickedInventory().equals(playerInventory)) return;
+        if (event.getClickedInventory().equals(playerInventory)) {
+            if (event.isShiftClick()) {
+                if (event.getCurrentItem() == null) return;
+                player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+                playerInventory.clear(event.getSlot());
+                event.setCancelled(true);
+            }
+        } else if (shopGUI.isInventory(event.getClickedInventory())) {
+            Inventory openInventory = event.getInventory();
+            if (!shopGUI.isInventory(openInventory)) return;
 
-        Inventory shopInventory = match.getWorldGame().getShopGUI().getGUI().getInventory();
-        Inventory openInventory = player.getOpenInventory().getTopInventory();
-        if (!openInventory.equals(shopInventory)) return;
+            GamePlayer gamePlayer = worldGame.getPlayer(event.getWhoClicked().getUniqueId());
+            if (gamePlayer != null) {
+                ItemMeta meta = event.getCurrentItem().getItemMeta();
 
-        if (event.isShiftClick()) {
-            if (event.getCurrentItem() == null) return;
-            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
-            playerInventory.clear(event.getSlot());
+                String identifier = meta.getPersistentDataContainer().get(plugin.getGameConfig().getNamespacedItemKey(), PersistentDataType.STRING);
+                ShopItem item = shopGUI.getItem(identifier);
+                if (item == null) {
+                    event.setCancelled(true);
+                    return;
+                }
+
+                Sound sound;
+                if (item.handlePurchase(gamePlayer)) {
+                    int levels = player.getLevel();
+                    player.setLevel(levels - item.getPrice());
+
+                    if (item.includesItem()) {
+                        if (item.includesExact()) playerInventory.addItem(event.getCurrentItem().clone());
+                        else playerInventory.addItem(new ItemStack(event.getCurrentItem().getType(), event.getCurrentItem().getAmount()));
+                    }
+
+                    for (String command : item.getCommands()) {
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                    }
+                    sound = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+                } else sound = Sound.ENTITY_VILLAGER_NO;
+                gamePlayer.getBukkitPlayer().playSound(gamePlayer.getBukkitPlayer().getLocation(), sound, 1, 1);
+            }
+            event.setCancelled(true);
         }
     }
 
@@ -74,7 +115,7 @@ public class PlayerListener implements Listener {
         player.setFlying(false);
         player.setAllowFlight(false);
         player.setLevel(0);
-        player.sendMessage(ChatColor.DARK_AQUA + "Welcome to ceedric.com Use " + ChatColor.GOLD + "/resources" + ChatColor.DARK_AQUA + " for gear.");
+        player.sendMessage(Messages.WELCOME);
 
         plugin.getGameManager().getKitStorage().load(player, match == null ? null : match.getWorldGame());
     }

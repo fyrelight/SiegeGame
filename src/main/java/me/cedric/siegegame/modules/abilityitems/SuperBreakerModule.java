@@ -1,14 +1,13 @@
 package me.cedric.siegegame.modules.abilityitems;
 
-import de.tr7zw.nbtapi.NBTCompound;
-import de.tr7zw.nbtapi.NBTItem;
 import me.cedric.siegegame.SiegeGamePlugin;
 import me.cedric.siegegame.model.game.Module;
 import me.cedric.siegegame.model.game.WorldGame;
 import me.cedric.siegegame.player.GamePlayer;
 import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -17,6 +16,9 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -64,37 +66,34 @@ public class SuperBreakerModule implements Module, Listener {
 
         ItemStack item = player.getInventory().getItemInMainHand();
 
-        if (item.getType().equals(Material.AIR))
+        if (item.isEmpty())
             return;
 
-        NBTItem nbtItem = new NBTItem(item);
-        NBTCompound compound = nbtItem.getCompound("siegegame-item");
+        ItemMeta meta = item.getItemMeta();
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
 
-        if (compound == null)
-            return;
-
-        if (!compound.hasKey("custom-properties"))
-            return;
-
-        List<String> properties = List.of(compound.getString("custom-properties").split(","));
+        List<String> properties = pdc.get(plugin.getGameConfig().getNamespacedPropertiesKey(), PersistentDataType.LIST.strings());
+        if (properties == null) return;
 
         if (!properties.contains("super-breaker"))
             return;
 
         if (isOnCooldown(player.getUniqueId())) {
             long l = getCooldownSeconds(player.getUniqueId());
-            player.sendMessage(ChatColor.RED + "You cannot use this for " + ChatColor.YELLOW + l + " seconds");
+            player.sendMessage(Component.text("You cannot use this for ").color(NamedTextColor.RED)
+                    .append(Component.text(l + " seconds").color(NamedTextColor.YELLOW)));
             return;
         }
 
         // finally activate
-        int previousEfficiency = item.getEnchantmentLevel(Enchantment.DIG_SPEED);
-        item.addUnsafeEnchantment(Enchantment.DIG_SPEED, 10);
+        int previousEfficiency = item.getEnchantmentLevel(Enchantment.EFFICIENCY);
+        item.addUnsafeEnchantment(Enchantment.EFFICIENCY, 10);
         player.playSound(Sound.sound(org.bukkit.Sound.ITEM_TRIDENT_RIPTIDE_3.key(), Sound.Source.PLAYER, 1.0F, 0.1F));
-        player.sendActionBar(ChatColor.GREEN + "You have activated " + ChatColor.GOLD + "Super Breaker");
+        player.sendActionBar(Component.text("You have activated ").color(NamedTextColor.GREEN)
+                .append(Component.text("Super Breaker").color(NamedTextColor.GOLD)));
         putOnCooldown(player.getUniqueId());
 
-        Bukkit.getScheduler().runTaskLater(plugin, () -> item.addEnchantment(Enchantment.DIG_SPEED, Math.min(previousEfficiency, 5)), secondsOfSuperBreaker * 20L);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> item.addEnchantment(Enchantment.EFFICIENCY, Math.min(previousEfficiency, 5)), secondsOfSuperBreaker * 20L);
     }
 
     private void putOnCooldown(UUID uuid) {

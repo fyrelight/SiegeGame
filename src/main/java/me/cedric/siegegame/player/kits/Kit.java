@@ -1,11 +1,16 @@
 package me.cedric.siegegame.player.kits;
 
-import de.tr7zw.nbtapi.NBTItem;
+import me.cedric.siegegame.SiegeGamePlugin;
+import me.cedric.siegegame.config.GameConfig;
 import me.cedric.siegegame.display.shop.ShopGUI;
 import me.cedric.siegegame.display.shop.ShopItem;
 import me.cedric.siegegame.model.game.WorldGame;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,19 +18,21 @@ import java.util.UUID;
 
 public class Kit {
 
+    private final SiegeGamePlugin plugin;
     private final String mapIdentifier;
     private final String rawString;
     private final UUID uuid;
     private List<ShopItem> contents = new ArrayList<>();
 
-    public Kit(String mapIdentifier, String rawString, UUID kitUUID) {
+    public Kit(SiegeGamePlugin plugin, String mapIdentifier, String rawString, UUID kitUUID) {
+        this.plugin = plugin;
         this.mapIdentifier = mapIdentifier;
         this.uuid = kitUUID;
         this.rawString = rawString;
     }
 
     public void setContents(ItemStack[] contents, WorldGame worldGame) {
-        this.contents = contents(contents, worldGame);
+        this.contents = contents(this.plugin.getGameConfig(), contents, worldGame);
     }
 
     public void populateFromRawString(WorldGame worldGame) {
@@ -74,7 +81,7 @@ public class Kit {
                 continue;
             }
 
-            if (shopItem.includesNBT())
+            if (shopItem.includesExact())
                 items.add(shopItem.getDisplayItem());
             else
                 items.add(new ItemStack(shopItem.getDisplayItem().getType(), shopItem.getDisplayItem().getAmount()));
@@ -91,7 +98,7 @@ public class Kit {
         return rawString;
     }
 
-    private static List<ShopItem> contents(ItemStack[] items, WorldGame worldGame) {
+    private static List<ShopItem> contents(GameConfig config, ItemStack[] items, WorldGame worldGame) {
         List<ShopItem> newList = new ArrayList<>();
         for (ItemStack item : items.clone()) {
             if (item == null || item.getType().equals(Material.AIR)) {
@@ -99,7 +106,7 @@ public class Kit {
                 continue;
             }
 
-            ShopItem shopItem = getShopItem(item, worldGame);
+            ShopItem shopItem = getShopItem(config, item, worldGame);
             if (shopItem == null || shopItem.getPrice() > 0) {
                 newList.add(null);
                 continue;
@@ -111,20 +118,19 @@ public class Kit {
         return newList;
     }
 
-    private static ShopItem getShopItem(ItemStack item, WorldGame worldGame) {
+    private static ShopItem getShopItem(GameConfig config, ItemStack item, WorldGame worldGame) {
         for (ShopItem shopItem : worldGame.getShopGUI().getShopItems()) {
-
-            if (!shopItem.includesNBT() && shopItem.getDisplayItem().getType().equals(item.getType()))
+            if (!shopItem.includesExact() && shopItem.getDisplayItem().getType().equals(item.getType()))
                 return shopItem;
 
-            if (!hasNBTCompound("siegegame-item", item.clone()))
-                continue;
+            ItemMeta meta = item.getItemMeta();
+            PersistentDataContainer pdc = meta.getPersistentDataContainer();
+            NamespacedKey identifierKey = config.getNamespacedItemKey();
 
-            NBTItem shopNBT = new NBTItem(shopItem.getDisplayItem());
-            NBTItem nbtItem = new NBTItem(item.clone());
+            if (!pdc.has(identifierKey, PersistentDataType.STRING)) continue;
 
-            String identifier = nbtItem.getCompound("siegegame-item").getString("identifier");
-            String shopItemID = shopNBT.getCompound("siegegame-item").getString("identifier");
+            String identifier = pdc.get(identifierKey, PersistentDataType.STRING);
+            String shopItemID = shopItem.getIdentifier();
 
             if (identifier.equalsIgnoreCase(shopItemID))
                 return shopItem;
@@ -133,17 +139,12 @@ public class Kit {
         return null;
     }
 
-    private static boolean hasNBTCompound(String compound, ItemStack itemStack) {
-        NBTItem nbtItem = new NBTItem(itemStack);
-        return nbtItem.getCompound(compound) != null;
-    }
-
     public UUID getKitUUID() {
         return uuid;
     }
 
-    public static Kit fromInventory(ItemStack[] contents, WorldGame worldGame, String mapIdentifier) {
-        List<ShopItem> shopItemContents = contents(contents, worldGame);
+    public static Kit fromInventory(SiegeGamePlugin plugin, ItemStack[] contents, WorldGame worldGame, String mapIdentifier) {
+        List<ShopItem> shopItemContents = contents(plugin.getGameConfig(), contents, worldGame);
         StringBuilder items = new StringBuilder();
 
         int i = 0;
@@ -159,7 +160,7 @@ public class Kit {
             i++;
         }
 
-        return new Kit(mapIdentifier, items.toString(), UUID.randomUUID());
+        return new Kit(plugin, mapIdentifier, items.toString(), UUID.randomUUID());
     }
 
     @Override

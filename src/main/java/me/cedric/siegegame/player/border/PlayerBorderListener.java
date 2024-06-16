@@ -6,7 +6,8 @@ import me.cedric.siegegame.enums.Permissions;
 import me.cedric.siegegame.model.SiegeGameMatch;
 import me.cedric.siegegame.player.GamePlayer;
 import me.cedric.siegegame.player.border.blockers.ProjectileFollowTask;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -42,7 +43,7 @@ public class PlayerBorderListener implements Listener {
 
         BorderUpdateTask borderUpdateTask = new BorderUpdateTask(plugin.getGameManager(), event.getPlayer().getUniqueId());
 
-        borderUpdateTask.runTaskTimer(plugin, 0, 1);
+        borderUpdateTask.runTaskTimer(plugin, 0, 100);
     }
 
     /*
@@ -203,7 +204,7 @@ public class PlayerBorderListener implements Listener {
             else location = match.getGameMap().getDefaultSpawn();
         }
         player.getBukkitPlayer().teleport(location);
-        player.getBukkitPlayer().sendMessage(ChatColor.RED + "You have been rolled back for getting through a border.");
+        player.getBukkitPlayer().sendMessage(Component.text("You have been rolled back for getting through a border.").color(NamedTextColor.RED));
     }
 
     private boolean shouldCheck(GamePlayer gamePlayer) {

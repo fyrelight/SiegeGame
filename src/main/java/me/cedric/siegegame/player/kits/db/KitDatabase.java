@@ -1,12 +1,8 @@
 package me.cedric.siegegame.player.kits.db;
 
 import me.cedric.siegegame.SiegeGamePlugin;
-import me.cedric.siegegame.display.shop.ShopItem;
-import me.cedric.siegegame.model.game.WorldGame;
 import me.cedric.siegegame.player.kits.Kit;
 import me.cedric.siegegame.player.kits.PlayerKitManager;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.sql.Connection;
@@ -15,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -90,7 +85,7 @@ public class KitDatabase {
                 UUID kitUUID = UUID.fromString(resultSet.getString("uniqueId"));
                 String mapName = resultSet.getString("mapName");
                 String rawString = resultSet.getString("items");
-                kits.add(new Kit(mapName, rawString, kitUUID));
+                kits.add(new Kit(plugin, mapName, rawString, kitUUID));
             }
 
             PlayerKitManager kitManager = new PlayerKitManager(uuid);

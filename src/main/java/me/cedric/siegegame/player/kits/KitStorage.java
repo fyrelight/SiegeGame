@@ -75,7 +75,7 @@ public class KitStorage {
 
         Kit kit = playerKitManager.getKit(mapIdentifier);
         if (kit == null) {
-            kit = Kit.fromInventory(contents, worldGame, mapIdentifier);
+            kit = Kit.fromInventory(plugin, contents, worldGame, mapIdentifier);
             playerKitManager.addKit(kit);
         }
 

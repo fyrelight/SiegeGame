@@ -91,39 +91,24 @@
             <id>enginehub-maven</id>
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
+
         <repository>
-            <id>sirblobman-public</id>
-            <url>https://nexus.sirblobman.xyz/public/</url>
+            <id>lunarclient</id>
+            <url>https://repo.lunarclient.dev</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>com.github.stefvanschie.inventoryframework</groupId>
-            <artifactId>IF</artifactId>
-            <version>0.10.11</version>
-        </dependency>
-        <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.20.1-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>me.deltaorion</groupId>
-            <artifactId>bukkit-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>de.tr7zw</groupId>
-            <artifactId>item-nbt-api-plugin</artifactId>
-            <version>2.11.3</version>
+            <version>1.20.6-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>5.0.0-SNAPSHOT</version>
+            <version>5.3.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -144,32 +129,14 @@
             <version>5.3.1</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>me.filoghost.holographicdisplays</groupId>
-            <artifactId>holographicdisplays-api</artifactId>
-            <version>3.0.0</version>
-            <scope>provided</scope>
-        </dependency>
+
         <dependency>
             <groupId>com.lunarclient</groupId>
             <artifactId>bukkitapi</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/bukkitapi.jar</systemPath>
-        </dependency>
-        <!-- CombatLogX API -->
-        <dependency>
-            <groupId>com.github.sirblobman.combatlogx</groupId>
-            <artifactId>api</artifactId>
-            <version>11.4-SNAPSHOT</version>
+            <version>1.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.github.sirblobman.api</groupId>
-            <artifactId>core</artifactId>
-            <version>2.9-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
+
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

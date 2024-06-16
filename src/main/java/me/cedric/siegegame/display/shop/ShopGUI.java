@@ -1,11 +1,8 @@
 package me.cedric.siegegame.display.shop;
 
-import com.github.stefvanschie.inventoryframework.gui.GuiItem;
-import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
-import com.github.stefvanschie.inventoryframework.pane.StaticPane;
-import me.cedric.siegegame.model.game.WorldGame;
-import me.cedric.siegegame.player.GamePlayer;
-import org.bukkit.Sound;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -14,30 +11,16 @@ import java.util.List;
 public class ShopGUI {
 
     private final List<ShopItem> shopItems = new ArrayList<>();
-    private final WorldGame worldGame;
     private String guiName = "Shop";
-    private ChestGui chestGui;
-    private StaticPane pane;
+    private Inventory chestGui;
 
-    public ShopGUI(WorldGame worldGame) {
-        this.worldGame = worldGame;
+    public ShopGUI() {
         createGUI();
     }
 
     public void addItem(ShopItem button) {
         shopItems.add(button);
-        this.pane.addItem(new GuiItem(button.getDisplayItem(), inventoryClickEvent -> {
-            GamePlayer gamePlayer = worldGame.getPlayer(inventoryClickEvent.getWhoClicked().getUniqueId());
-            if (gamePlayer != null) {
-                Sound sound;
-                if (button.handlePurchase(gamePlayer))
-                    sound = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
-                else
-                    sound = Sound.ENTITY_VILLAGER_NO;
-                gamePlayer.getBukkitPlayer().playSound(gamePlayer.getBukkitPlayer().getLocation(), sound, 1, 1);
-            }
-            inventoryClickEvent.setCancelled(true);
-        }), button.getSlot() % 9, button.getSlot() / 9);
+        this.chestGui.setItem(button.getSlot(), button.getDisplayItem());
     }
 
     public void removeItem(ItemStack item) {
@@ -50,26 +33,27 @@ public class ShopGUI {
 
     private void createGUI() {
         int rows = 3;
-        this.chestGui = new ChestGui(rows, guiName);
-        this.pane = new StaticPane(0, 0, 9, rows);
-        chestGui.addPane(pane);
-        chestGui.setOnGlobalClick(inventoryClickEvent -> inventoryClickEvent.setCancelled(true));
+        this.chestGui = Bukkit.createInventory(null, rows * 9, guiName);
     }
 
     public void clear() {
-        this.pane.clear();
+        this.chestGui.clear();
     }
 
     public void setGUIName(String guiName) {
         this.guiName = guiName;
     }
 
-    public ChestGui getGUI() {
-        return chestGui;
+    public void show(HumanEntity who) {
+        who.openInventory(this.chestGui);
     }
 
     public ShopItem getItem(String id) {
         return shopItems.stream().filter(shopItem -> shopItem.getIdentifier().equalsIgnoreCase(id)).findAny().orElse(null);
+    }
+
+    public boolean isInventory(Inventory inventory) {
+        return this.chestGui.equals(inventory);
     }
 
 }

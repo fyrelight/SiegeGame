@@ -5,7 +5,8 @@ import me.cedric.siegegame.player.border.Border;
 import me.cedric.siegegame.model.SiegeGameMatch;
 import me.cedric.siegegame.player.GamePlayer;
 import me.cedric.siegegame.player.border.PlayerBorderHandler;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Projectile;
@@ -72,6 +73,6 @@ public class ProjectileFollowTask extends BukkitRunnable {
         entityTracker.stopTracking(projectile.getUniqueId());
         projectile.remove();
         this.cancel();
-        player.getBukkitPlayer().sendMessage(ChatColor.RED + "You cannot use projectiles near a border or safe area");
+        player.getBukkitPlayer().sendMessage(Component.text("You cannot use projectiles near a border or safe area").color(NamedTextColor.RED));
     }
 }

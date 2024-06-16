@@ -1,5 +1,6 @@
 package me.cedric.siegegame.config;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.EntityType;
 
 import java.util.List;
@@ -25,5 +26,11 @@ public interface GameConfig {
     boolean getStartGameOnServerStartup();
 
     List<String> getMapIDs();
+
+    NamespacedKey getNamespacedItemKey();
+
+    NamespacedKey getNamespacedMapKey();
+
+    NamespacedKey getNamespacedPropertiesKey();
 
 }

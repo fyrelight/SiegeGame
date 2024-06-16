@@ -1,8 +1,11 @@
 package me.cedric.siegegame.modules.stats;
 
+import me.cedric.siegegame.enums.Messages;
 import me.cedric.siegegame.model.game.WorldGame;
 import me.cedric.siegegame.player.GamePlayer;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.TextReplacementConfig;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,15 +17,6 @@ import java.util.stream.Collectors;
 public class StatsDisplay {
 
     private static final int displayUntilTop = 10;
-    private static String MESSAGE_TITLE_HEADER = "";
-    private static String MESSAGE_TITLE = "&e&lMATCH LEADERBOARD";
-    private static String POSITION_PLACEMENT_FORMAT = "&f%position%. &e%player% &7Damage: &f%hearts% &c❤ &8| &7Kills: &f%kills%";
-
-    static {
-        MESSAGE_TITLE = ChatColor.translateAlternateColorCodes('&', MESSAGE_TITLE);
-        MESSAGE_TITLE_HEADER = ChatColor.translateAlternateColorCodes('&', MESSAGE_TITLE_HEADER);
-        POSITION_PLACEMENT_FORMAT = ChatColor.translateAlternateColorCodes('&', POSITION_PLACEMENT_FORMAT);
-    }
 
     public static void display(WorldGame worldGame, HashMap<UUID, Double> damageMap, HashMap<UUID, Integer> killMap) {
         List<Map.Entry<UUID, Double>> damageSorted = damageMap.entrySet().stream()
@@ -31,9 +25,9 @@ public class StatsDisplay {
 
         Collections.reverse(damageSorted);
 
-        broadcastMessage(worldGame, MESSAGE_TITLE_HEADER);
-        broadcastMessage(worldGame, MESSAGE_TITLE);
-        broadcastMessage(worldGame, "");
+        broadcastMessage(worldGame, Messages.STATS_HEADER);
+        broadcastMessage(worldGame, Messages.STATS_TITLE);
+        broadcastMessage(worldGame, Component.empty());
 
         int i = 1;
         for (Map.Entry<UUID, Double> damageEntry : damageSorted) {
@@ -47,21 +41,45 @@ public class StatsDisplay {
             double damage = roundToHalf(damageMap.getOrDefault(gamePlayer.getUUID(), 0D));
             double hearts = damageToHearts(damage);
 
-            String toDisplay = POSITION_PLACEMENT_FORMAT
-                    .replace("%position%", i + "")
-                    .replace("%damage%", damage + "")
-                    .replace("%kills%", (killMap.getOrDefault(gamePlayer.getUUID(), 0)) + "")
-                    .replace("%hearts%", hearts + "")
-                    .replace("%player%", gamePlayer.getBukkitPlayer().getName());
+            Component toDisplay = Messages.STATS_PLACEMENT_FORMAT.asComponent()
+                    .replaceText(TextReplacementConfig.builder()
+                            .matchLiteral("%position%")
+                            .replacement(i + "")
+                            .build()
+                    )
+                    .replaceText(TextReplacementConfig.builder()
+                            .matchLiteral("%damage%")
+                            .replacement(damage + "")
+                            .build()
+                    )
+                    .replaceText(TextReplacementConfig.builder()
+                            .matchLiteral("%kills%")
+                            .replacement((killMap.getOrDefault(gamePlayer.getUUID(), 0)) + "")
+                            .build()
+                    )
+                    .replaceText(TextReplacementConfig.builder()
+                            .matchLiteral("%hearts%")
+                            .replacement(hearts + "")
+                            .build()
+                    )
+                    .replaceText(TextReplacementConfig.builder()
+                            .matchLiteral("%player%")
+                            .replacement(gamePlayer.getBukkitPlayer().getName())
+                            .build()
+                    );
             broadcastMessage(worldGame, toDisplay);
             i++;
         }
 
-        broadcastMessage(worldGame, MESSAGE_TITLE_HEADER);
+        broadcastMessage(worldGame, Messages.STATS_HEADER);
 
     }
 
-    private static void broadcastMessage(WorldGame worldGame, String message) {
+    private static void broadcastMessage(WorldGame worldGame, ComponentLike message) {
+        broadcastMessage(worldGame, message.asComponent());
+    }
+
+    private static void broadcastMessage(WorldGame worldGame, Component message) {
         for (GamePlayer gamePlayer : worldGame.getPlayers()) {
             gamePlayer.getBukkitPlayer().sendMessage(message);
         }

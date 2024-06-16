@@ -1,6 +1,7 @@
 package me.cedric.siegegame.modules.abilityitems;
 
 import me.cedric.siegegame.SiegeGamePlugin;
+import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -12,7 +13,7 @@ public interface AbilityItem {
 
     ItemStack getItem();
 
-    String getDisplayName();
+    Component getDisplayName();
 
     NamespacedKey getNamespacedKey();
 

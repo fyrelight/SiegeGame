@@ -3,7 +3,7 @@ package me.cedric.siegegame.model.game.death;
 import me.cedric.siegegame.SiegeGamePlugin;
 import me.cedric.siegegame.player.GamePlayer;
 import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -41,7 +41,9 @@ public class RespawnTask extends BukkitRunnable {
             return;
         }
 
-        sendActionBar(player, "&cYou will respawn in &e" + getRemainingTime() + " seconds");
+        sendActionBar(player, Component.text("You will respawn in ").color(NamedTextColor.RED)
+                .append(Component.text(getRemainingTime() + " seconds").color(NamedTextColor.YELLOW))
+        );
         i++;
     }
 
@@ -57,8 +59,8 @@ public class RespawnTask extends BukkitRunnable {
         super.runTaskTimer(plugin, 0, 20);
     }
 
-    private void sendActionBar(Player player, String message) {
-        player.sendActionBar(Component.text(ChatColor.translateAlternateColorCodes('&', message)));
+    private void sendActionBar(Player player, Component message) {
+        player.sendActionBar(message);
     }
 
     public Location getOriginalRespawn() {

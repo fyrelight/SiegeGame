@@ -1,0 +1,43 @@
+name: SiegeGame
+version: '${project.version}'
+main: me.cedric.siegegame.SiegeGamePlugin
+api-version: 1.20.6
+permissions:
+  siegegame.*:
+    description: "All permissions for SiegeGame"
+    default: op
+    children:
+      siegegame.help: true
+      siegegame.resources: true
+      siegegame.rally: true
+      siegegame.kits: true
+      siegegame.spawn: true
+  siegegame.help:
+    description: "Able to view help when running /siegegame without any valid arguments"
+    default: op
+  siegegame.resources:
+    description: "Able to use /siegegame:resources command"
+    default: true
+  siegegame.rally:
+    description: "Able to use /siegegame:rally command"
+    default: true
+  siegegame.kits:
+    description: "Able to use /siegegame:kits command"
+    default: true
+  siegegame.spawn:
+    description: "Able to use /siegegame:town spawn command"
+    default: true
+dependencies:
+  server:
+    PlaceholderAPI:
+      load: BEFORE
+      required: false
+    ProtocolLib:
+      load: BEFORE
+      required: true
+    LunarClient-API:
+      load: BEFORE
+      required: true
+    CombatLogX:
+      load: BEFORE
+      required: true

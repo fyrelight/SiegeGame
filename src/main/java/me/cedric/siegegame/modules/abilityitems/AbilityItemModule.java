@@ -6,13 +6,17 @@ import me.cedric.siegegame.model.game.Module;
 import me.cedric.siegegame.model.game.WorldGame;
 import me.cedric.siegegame.modules.abilityitems.items.MortyAntiQuickie;
 import me.cedric.siegegame.modules.abilityitems.items.QxtiStick;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
@@ -26,29 +30,32 @@ public class AbilityItemModule implements Module {
 
     @Override
     public void onStartGame(SiegeGamePlugin plugin, WorldGame worldGame) {
-        registerAbilities();
+        registerAbilities(plugin);
         // spawn an abilityitem every 30 seconds
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             Random r = new Random();
-            int index = abilityItems.size() == 0 ? 0 : r.nextInt(abilityItems.size());
-            // spawn in with holo api
+            int index = abilityItems.isEmpty() ? 0 : r.nextInt(abilityItems.size());
+            // spawn in without holo api
             AbilityItem abilityItem = abilityItems.get(index);
-            Location itemLocation = generateLocation(plugin, worldGame, plugin.getGameManager().getCurrentMatch().getGameMap().getDefaultSpawn(), 50);
-            FloatingItem floatingItem = new FloatingItem(plugin, itemLocation,
-                    abilityItem.getDisplayName(), abilityItem.getItem());
-            floatingItem.create();
-            worldGame.getPlayers().forEach(gamePlayer -> sendBeaconBeam(gamePlayer.getBukkitPlayer(), floatingItem.getLocation().clone()));
+            Location location = generateLocation(plugin, worldGame, plugin.getGameManager().getCurrentMatch().getGameMap().getDefaultSpawn(), 50);
 
-            Location location = floatingItem.getLocation();
-            Bukkit.broadcastMessage(Messages.PREFIX.toString() + ChatColor.LIGHT_PURPLE + "An " + ChatColor.YELLOW + "ability item" +
-                    ChatColor.LIGHT_PURPLE + " has spawned. Follow the beacon beam or go to " + ChatColor.AQUA + location.getBlockX() + ", " +
-                    location.getBlockY() + ", " + location.getBlockZ());
+            FloatingItem floatingItem = new FloatingItem(plugin, location.clone(), abilityItem.getDisplayName(), abilityItem.getItem());
+
+            worldGame.getPlayers().forEach(gamePlayer -> sendBeaconBeam(gamePlayer.getBukkitPlayer(), location.clone()));
+
+            Bukkit.broadcast(Component.empty().color(NamedTextColor.LIGHT_PURPLE)
+                    .append(Messages.PREFIX)
+                    .append(Component.text("An "))
+                    .append(Component.text("ability item").color(NamedTextColor.YELLOW))
+                    .append(Component.text(" has spawned. Follow the beacon beam or go to "))
+                    .append(Component.text(location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ()).color(NamedTextColor.AQUA))
+            );
         }, 10 * 20, 30 * 20);
     }
 
-    private void registerAbilities() {
-        abilityItems.add(new MortyAntiQuickie());
-        abilityItems.add(new QxtiStick());
+    private void registerAbilities(Plugin plugin) {
+        abilityItems.add(new MortyAntiQuickie(plugin));
+        abilityItems.add(new QxtiStick(plugin));
     }
 
     @Override

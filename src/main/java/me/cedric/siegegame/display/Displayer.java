@@ -7,37 +7,34 @@ import me.cedric.siegegame.model.game.WorldGame;
 import me.cedric.siegegame.model.teams.Team;
 import me.cedric.siegegame.player.GamePlayer;
 import me.cedric.siegegame.model.teams.territory.Territory;
-import me.deltaorion.bukkit.display.actionbar.ActionBar;
-import me.deltaorion.bukkit.display.bossbar.BarColor;
-import me.deltaorion.bukkit.display.bossbar.EBossBar;
-import me.deltaorion.bukkit.display.bukkit.BukkitApiPlayer;
-import me.deltaorion.bukkit.display.scoreboard.EScoreboard;
-import me.deltaorion.common.locale.message.Message;
+import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 public class Displayer {
+    private static final Component TITLE = Component.text("Sieges").decorate(TextDecoration.BOLD).color(NamedTextColor.DARK_AQUA);
 
     private final SiegeGamePlugin plugin;
     private final GamePlayer gamePlayer;
-    private final BukkitApiPlayer apiPlayer;
+    private final Player player;
+    private PlayerScoreboard scoreboard;
+    private BossBar bossBar = null;
 
     public Displayer(SiegeGamePlugin plugin, GamePlayer gamePlayer) {
         this.plugin = plugin;
         this.gamePlayer = gamePlayer;
-        this.apiPlayer = plugin.getBukkitPlayerManager().getPlayer(gamePlayer.getUUID());
+        this.player = gamePlayer.getBukkitPlayer();
+        this.scoreboard = new PlayerScoreboard(TITLE, gamePlayer, player, plugin);
     }
 
     public void updateScoreboard() {
-        if (apiPlayer == null)
+        if (player == null)
             return;
 
         SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
@@ -45,39 +42,13 @@ public class Displayer {
         if (match == null)
             return;
 
-        List<String> lines = new ArrayList<>();
-        lines.add("");
-
-        List<Team> teams = match.getWorldGame().getTeams().stream().sorted(Comparator.comparing(Team::getName)).toList();
-
-        for (Team team : teams) {
-            String color = ColorUtil.getChatColor(ColorUtil.getRelationalColor(gamePlayer.getTeam(), team).getTextColor());
-            lines.add(color + team.getName() + ": " +
-                    ChatColor.WHITE + team.getPoints() + " points");
-        }
-
-        lines.add("");
-        lines.add(ChatColor.GOLD + "Map: " + ChatColor.GRAY + match.getGameMap().getDisplayName());
-        lines.add("");
-        lines.add(ChatColor.YELLOW + "ceedric.com");
-
-        EScoreboard scoreboard = apiPlayer.getScoreboard() == null ? apiPlayer.setScoreboard(apiPlayer.getUniqueID().toString(), lines.size()) : apiPlayer.getScoreboard();
-        scoreboard.setTitle(ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "Sieges");
-
-        int i = 0;
-        for (String line : lines) {
-            scoreboard.setLine(line, i);
-            i++;
-        }
+        this.scoreboard.setScores(match.getWorldGame());
+        this.scoreboard.setMap(match.getGameMap().getDisplayName().color(NamedTextColor.GRAY));
+        this.scoreboard.setServer(Component.text("ceedric.com").color(NamedTextColor.YELLOW));
     }
 
     public void wipeScoreboard() {
-        BukkitApiPlayer apiPlayer = plugin.getBukkitPlayerManager().getPlayer(gamePlayer.getUUID());
-
-        if (apiPlayer == null)
-            return;
-
-        apiPlayer.removeScoreboard();
+        this.scoreboard = new PlayerScoreboard(TITLE, gamePlayer, player, plugin);
     }
 
     public void displayKill(GamePlayer dead, GamePlayer killerGamePlayer) {
@@ -117,24 +88,34 @@ public class Displayer {
     }
 
     public void displayInsideClaims(WorldGame worldGame, Territory territory) {
-        Message message = Messages.CLAIMS_ENTERED;
-        Team team = worldGame.getTeam(territory.getTeam().getConfigKey());
-        String color = ColorUtil.getChatColor(ColorUtil.getRelationalColor(gamePlayer.getTeam(), team).getTextColor());
-        String s = String.format(message.toString(), color + team.getName());
-        ActionBar actionBar = new ActionBar(s, Duration.ofSeconds(3));
-        apiPlayer.getActionBarManager().send(actionBar);
+        if (this.bossBar != null) player.hideBossBar(this.bossBar);
 
-        EBossBar bossBar = apiPlayer.setBossBar("siegegame-enemy-claims");
-        bossBar.setMessage(ChatColor.YELLOW + "You are currently in " + s + ChatColor.YELLOW + " claims");
-        bossBar.setColor(BarColor.YELLOW);
+        Team team = worldGame.getTeam(territory.getTeam().getConfigKey());
+
+        TeamColor color = ColorUtil.getRelationalColor(gamePlayer.getTeam(), team);
+
+
+        player.sendActionBar(Messages.NOTIFICATION_CLAIMS_ENTERED.asComponent()
+                .replaceText(TextReplacementConfig.builder()
+                        .matchLiteral("%s")
+                        .replacement(team.getName().color(color.getTextColor()))
+                        .build()));
+
+        this.bossBar = BossBar.bossBar(
+                Component.text("You are currently in ").color(color.getTextColor())
+                        .append(team.getName())
+                        .append(Component.text(" claims")),
+                1, color.getBossBarColor(), BossBar.Overlay.PROGRESS);
+
+        player.showBossBar(this.bossBar);
     }
 
     public void removeDisplayInsideClaims() {
-        apiPlayer.removeBossBar();
+        player.hideBossBar(this.bossBar);
     }
 
     public void displayActionCancelled() {
-        //gamePlayer.getBukkitPlayer().sendMessage(Messages.CLAIMS_ACTION_CANCELLED.toString());
+        //gamePlayer.getBukkitPlayer().sendMessage(Messages.ERROR_FORBIDDEN_IN_ENEMY_TERRITORY);
     }
 
     public void displayVictory() {

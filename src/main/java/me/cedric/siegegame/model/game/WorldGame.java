@@ -7,6 +7,7 @@ import me.cedric.siegegame.SiegeGamePlugin;
 import me.cedric.siegegame.model.game.death.DeathManager;
 import me.cedric.siegegame.display.shop.ShopGUI;
 import me.cedric.siegegame.model.map.GameMap;
+import me.cedric.siegegame.modules.abilityitems.AbilityItemModule;
 import me.cedric.siegegame.modules.abilityitems.SuperBreakerModule;
 import me.cedric.siegegame.modules.lunarclient.LunarClientModule;
 import me.cedric.siegegame.modules.stats.StatsModule;
@@ -16,8 +17,9 @@ import me.cedric.siegegame.model.teams.Team;
 import me.cedric.siegegame.model.teams.territory.TerritoryBlockers;
 import me.cedric.siegegame.player.kits.Kit;
 import me.cedric.siegegame.player.kits.PlayerKitManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
@@ -42,7 +44,7 @@ public class WorldGame {
 
     public WorldGame(SiegeGamePlugin plugin, String mapIdentifier) {
         this.plugin = plugin;
-        this.shopGUI = new ShopGUI(this);
+        this.shopGUI = new ShopGUI();
         this.playerManager = new PlayerManager(plugin);
         this.mapIdentifier = mapIdentifier;
         this.deathManager = new DeathManager(plugin, this);
@@ -52,6 +54,7 @@ public class WorldGame {
         modules.add(new LunarClientModule());
         modules.add(new SuperBreakerModule());
         modules.add(new StatsModule());
+        modules.add(new AbilityItemModule());
     }
 
     public String getMapIdentifier() {
@@ -120,7 +123,7 @@ public class WorldGame {
 
         player.getBorderHandler().addBorder(map.getMapBorder(), map.getBorderMaterial());
 
-        player.getBukkitPlayer().sendMessage(ChatColor.DARK_AQUA + "You have been assigned to the following team: " + team.getName());
+        player.getBukkitPlayer().sendMessage(Component.text("You have been assigned to the following team: ").append(team.getName()).color(NamedTextColor.DARK_AQUA));
     }
 
     public void updateAllScoreboards() {
@@ -153,6 +156,12 @@ public class WorldGame {
 
         assignRandomTeams();
 
+        for (Team team : getTeams()) {
+            TerritoryBlockers blockers = new TerritoryBlockers(this, team.getTerritory());
+            territoryBlockers.add(blockers);
+            plugin.getServer().getPluginManager().registerEvents(blockers, plugin);
+        }
+
         for (GamePlayer gamePlayer : getPlayers()) {
             gamePlayer.reset();
             gamePlayer.getBukkitPlayer().teleport(gamePlayer.getTeam().getSafeSpawn());
@@ -170,12 +179,6 @@ public class WorldGame {
             ICombatManager combatManager = plugin.getCombatLogX().getCombatManager();
             if (combatManager.isInCombat(gamePlayer.getBukkitPlayer()))
                 combatManager.untag(gamePlayer.getBukkitPlayer(), UntagReason.EXPIRE);
-        }
-
-        for (Team team : getTeams()) {
-            TerritoryBlockers blockers = new TerritoryBlockers(this, team.getTerritory());
-            territoryBlockers.add(blockers);
-            plugin.getServer().getPluginManager().registerEvents(blockers, plugin);
         }
 
         registerModules();

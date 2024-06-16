@@ -1,36 +1,34 @@
 package me.cedric.siegegame.display.shop;
 
-import org.bukkit.Material;
+import com.google.common.collect.ImmutableList;
+import me.cedric.siegegame.model.game.WorldGame;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 public class ShopItem implements Buyable {
 
-    private Purchase purchase;
     private final int price;
     private final int slot;
     private final ItemStack displayItem;
     private final boolean includesItem;
-    private final boolean includesNBT;
+    private final boolean includesExact;
+    private final List<String> commands;
     private String itemID;
 
-    public ShopItem(Purchase purchase, String itemID, ItemStack displayItem, int price, int slot, boolean includesItem, boolean includesNBT) {
-        this.purchase = purchase;
+    public ShopItem(String itemID, ItemStack displayItem, int price, int slot, boolean includesItem, boolean includesExact, List<String> commands) {
         this.price = price;
         this.slot = slot;
         this.includesItem = includesItem;
-        this.includesNBT = includesNBT;
+        this.includesExact = includesExact;
         this.displayItem = displayItem;
         this.itemID = itemID;
+        this.commands = commands;
     }
 
     @Override
     public ItemStack getDisplayItem() {
         return displayItem.clone();
-    }
-
-    @Override
-    public Purchase getPurchase() {
-        return purchase;
     }
 
     @Override
@@ -46,12 +44,16 @@ public class ShopItem implements Buyable {
         return slot;
     }
 
-    public boolean includesNBT() {
-        return includesNBT;
+    public boolean includesExact() {
+        return includesExact;
     }
 
     public String getIdentifier() {
         return itemID;
+    }
+
+    public List<String> getCommands() {
+        return ImmutableList.copyOf(this.commands);
     }
 
 }

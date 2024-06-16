@@ -1,13 +1,14 @@
 package me.cedric.siegegame.command;
 
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import me.cedric.siegegame.SiegeGamePlugin;
+import me.cedric.siegegame.enums.Messages;
 import me.cedric.siegegame.model.SiegeGameMatch;
 import me.cedric.siegegame.player.GamePlayer;
-import me.deltaorion.common.command.CommandException;
-import me.deltaorion.common.command.FunctionalCommand;
-import me.deltaorion.common.command.sent.SentCommand;
-import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -16,27 +17,30 @@ public class SpawnCommand extends FunctionalCommand {
     private SiegeGamePlugin plugin;
 
     public SpawnCommand(SiegeGamePlugin plugin) {
-        super("siegegame.spawn");
         this.plugin = plugin;
-        registerCompleter(1, sentCommand -> List.of("spawn"));
+        registerCompletions(1, List.of("spawn"));
     }
 
     @Override
-    public void commandLogic(SentCommand sentCommand) throws CommandException {
-        if (sentCommand.getSender().isConsole())
-            return;
+    public void commandLogic(@NotNull CommandSourceStack commandSourceStack, @NotNull String[] args) {
+        CommandSender sender = commandSourceStack.getSender();
 
-        if (sentCommand.getArgs().size() < 1 || !sentCommand.getArgs().get(0).asString().equalsIgnoreCase("spawn"))
+        if (!sender.hasPermission("siegegame.spawn")) {
+            sender.sendMessage(Messages.ERROR_REQUIRES_PERMISSION);
+            return;
+        }
+
+        Entity executor = commandSourceStack.getExecutor();
+        if (executor == null) return;
+
+        if (!(executor instanceof Player bukkitPlayer)) return;
+
+        if (args.length < 1 || !args[0].equalsIgnoreCase("spawn"))
             return;
 
         SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
 
         if (match == null)
-            return;
-
-        Player bukkitPlayer = Bukkit.getPlayer(sentCommand.getSender().getUniqueId());
-
-        if (bukkitPlayer == null)
             return;
 
         GamePlayer player = match.getWorldGame().getPlayer(bukkitPlayer.getUniqueId());

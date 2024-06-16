@@ -1,17 +1,59 @@
 package me.cedric.siegegame.enums;
 
-import me.deltaorion.common.locale.message.Message;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
 
-public abstract class Messages {
+public enum Messages implements ComponentLike {
+    PREFIX(Component.text("[ceedric.com] ").color(TextColor.color(247, 80, 30))),
 
-    public static final Message PREFIX = Message.valueOf(ChatColor.of(new Color(247, 80, 30)) + "[ceedric.com] ");
+    WELCOME(Component.empty()
+            .append(Component.text("Welcome to ceedric.com Use ").color(NamedTextColor.DARK_AQUA))
+            .append(Component.text("/resources").color(NamedTextColor.GOLD))
+            .append(Component.text(" for gear.").color(NamedTextColor.DARK_AQUA))
+    ),
 
-    public static final Message CLAIMS_ACTION_CANCELLED = Message.valueOf(PREFIX.toString() + ChatColor.RED + "You cannot do this in enemy territory.");
-    public static final Message CLAIMS_ENTERED = Message.valueOf("%s");
+    NOTIFICATION_CLAIMS_ENTERED(Component.text("%s")),
 
-    public static final Message RALLY_SET = Message.valueOf("Rally set.");
+    COMMAND_RALLY_SET(Component.text("Rally set.").color(NamedTextColor.GRAY)),
 
+    ERROR_FORBIDDEN_IN_ENEMY_TERRITORY(Component.text("You cannot do this in enemy territory.").color(NamedTextColor.RED)),
+    ERROR_REQUIRES_PERMISSION(Component.text("You do not have the required permissions for this command.").color(NamedTextColor.RED)),
+    ERROR_REQUIRES_LUNAR_CLIENT(Component.text("Lunar Client is required to use this feature.").color(NamedTextColor.RED)),
+    ERROR_REQUIRES_HAVING_TEAM_TO_BUY(Component.text("You need to be in a team to buy items").color(NamedTextColor.RED)),
+    ERROR_REQUIRES_BEING_IN_CLAIMS(Component.text("You need to be inside claims to do this").color(NamedTextColor.RED)),
+    ERROR_REQUIRES_BEING_ALIVE(Component.text("You cannot do this while dead").color(NamedTextColor.RED)),
+    ERROR_REQUIRES_MORE_LEVELS(Component.text("You do not have enough levels to buy this").color(NamedTextColor.RED)),
+    ERROR_REQUIRES_INVENTORY_SLOTS(Component.text("You do not have any empty inventory slots").color(NamedTextColor.RED)),
+
+    STATS_TITLE(Component.text("MATCH LEADERBOARD").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)),
+    STATS_HEADER(Component.empty()),
+    STATS_PLACEMENT_FORMAT(Component.empty().color(NamedTextColor.WHITE)
+            .append(Component.text("%position%. "))
+            .append(Component.text("%player% ").color(NamedTextColor.YELLOW))
+            .append(Component.text("Damage: ").color(NamedTextColor.GRAY))
+            .append(Component.text("%hearts% "))
+            .append(Component.text("❤ ").color(NamedTextColor.RED))
+            .append(Component.text("| ").color(NamedTextColor.DARK_GRAY)
+            .append(Component.text("Kills: ").color(NamedTextColor.GRAY))
+            .append(Component.text("%kills%"))
+            )
+    ),
+
+    ;
+
+    private final Component component;
+
+    Messages(Component component) {
+        this.component = component;
+    }
+
+    @Override
+    public @NotNull Component asComponent() {
+        return this.component;
+    }
 }

@@ -5,13 +5,14 @@ import me.cedric.siegegame.display.ColorUtil;
 import me.cedric.siegegame.model.SiegeGameMatch;
 import me.cedric.siegegame.model.teams.Team;
 import me.cedric.siegegame.player.GamePlayer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
 
 public enum Placeholder {
 
     TEAM_NAME("team_name", false, (siegeGame, gamePlayer, s, extra) -> {
         Team team = getTeam(siegeGame, gamePlayer, s);
-        return team == null ? "" : team.getName();
+        return team == null ? "" : LegacyComponentSerializer.legacySection().serialize(team.getName());
     }),
 
     TEAM_COLOR("team_color", false, (siegeGame, gamePlayer, s, extra) -> {

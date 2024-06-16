@@ -3,6 +3,8 @@ package me.cedric.siegegame.model.map;
 import me.cedric.siegegame.player.border.Border;
 import me.cedric.siegegame.util.BoundingBox;
 import me.cedric.siegegame.model.teams.TeamFactory;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -13,7 +15,8 @@ public class GameMap {
 
     private final FileMapLoader fileMapLoader;
     private final Set<TeamFactory> teamFactories;
-    private final String displayName;
+    private final Component displayName;
+    private final String name;
     private Border mapBorder;
     private final Material borderMaterial;
     private final Location defaultSpawn;
@@ -21,7 +24,8 @@ public class GameMap {
     public GameMap(FileMapLoader fileMapLoader, String displayName, Set<TeamFactory> teamFactory, Border border, Location defaultSpawn, Material borderMaterial) {
         this.fileMapLoader = fileMapLoader;
         this.teamFactories = teamFactory;
-        this.displayName = displayName;
+        this.name = MiniMessage.miniMessage().stripTags(displayName);
+        this.displayName = MiniMessage.miniMessage().deserialize(displayName);
         this.mapBorder = border;
         this.defaultSpawn = defaultSpawn;
         this.borderMaterial = borderMaterial;
@@ -80,7 +84,11 @@ public class GameMap {
         teamFactories.add(team);
     }
 
-    public String getDisplayName() {
+    public Component getDisplayName() {
         return displayName;
+    }
+
+    public String getName() {
+        return name;
     }
 }

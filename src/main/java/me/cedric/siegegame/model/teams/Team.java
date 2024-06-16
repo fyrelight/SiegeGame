@@ -6,6 +6,7 @@ import me.cedric.siegegame.player.border.Border;
 import me.cedric.siegegame.player.GamePlayer;
 import me.cedric.siegegame.model.teams.territory.Territory;
 import me.cedric.siegegame.model.game.WorldGame;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 
 import java.util.HashSet;
@@ -21,7 +22,7 @@ public class Team {
     private Location safeSpawn;
     private Border safeArea;
     private String identifier;
-    private String name;
+    private Component name;
     private TeamColor color;
 
     public Team(WorldGame worldGame, TeamFactory factory) {
@@ -83,7 +84,7 @@ public class Team {
         this.safeSpawn = safeSpawn;
     }
 
-    public String getName() {
+    public Component getName() {
         return name;
     }
 
