@@ -35,7 +35,7 @@ dependencies:
     ProtocolLib:
       load: BEFORE
       required: true
-    LunarClient-API:
+    Apollo-Bukkit:
       load: BEFORE
       required: true
     CombatLogX:
