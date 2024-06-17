@@ -63,7 +63,8 @@ public class Displayer {
                 .append(Component.text(killer.getName(), ColorUtil.getRelationalColor(gamePlayer.getTeam(), killerTeam).getTextColor())
                 .append(Component.text(" has killed ", TextColor.color(252, 252, 53)))
                 .append(Component.text(dead.getBukkitPlayer().getName() + " ", ColorUtil.getRelationalColor(gamePlayer.getTeam(), dead.getTeam()).getTextColor()))
-                .append(Component.text(killerTeam.getName() + ": ", TextColor.color(255, 194, 97)))
+                        .append(killerTeam.getName())
+                .append(Component.text(": ", TextColor.color(255, 194, 97)))
                 .append(Component.text("+" + plugin.getGameConfig().getPointsPerKill() + " points ", TextColor.color(255, 73, 23))));
 
         gamePlayer.getBukkitPlayer().sendMessage(textComponent);
