@@ -9,6 +9,7 @@ import me.cedric.siegegame.display.shop.ShopGUI;
 import me.cedric.siegegame.model.map.GameMap;
 import me.cedric.siegegame.modules.abilityitems.AbilityItemModule;
 import me.cedric.siegegame.modules.abilityitems.SuperBreakerModule;
+import me.cedric.siegegame.modules.capturepoint.ControlAreaModule;
 import me.cedric.siegegame.modules.lunarclient.LunarClientModule;
 import me.cedric.siegegame.modules.stats.StatsModule;
 import me.cedric.siegegame.player.GamePlayer;
@@ -54,7 +55,7 @@ public class WorldGame {
         modules.add(new LunarClientModule());
         modules.add(new SuperBreakerModule());
         modules.add(new StatsModule());
-        modules.add(new AbilityItemModule());
+        //modules.add(new AbilityItemModule());
     }
 
     public String getMapIdentifier() {
