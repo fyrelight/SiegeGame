@@ -18,6 +18,7 @@ public final class PlayerManager {
     }
 
     public void addPlayer(UUID uuid) {
+        if (players.containsKey(uuid)) return;
         players.put(uuid, new GamePlayer(uuid, plugin));
     }
 

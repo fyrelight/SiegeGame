@@ -24,13 +24,14 @@ public class Displayer {
     private final GamePlayer gamePlayer;
     private final Player player;
     private PlayerScoreboard scoreboard;
-    private BossBar bossBar = null;
+    private BossBar bossBar;
 
     public Displayer(SiegeGamePlugin plugin, GamePlayer gamePlayer) {
         this.plugin = plugin;
         this.gamePlayer = gamePlayer;
         this.player = gamePlayer.getBukkitPlayer();
         this.scoreboard = new PlayerScoreboard(TITLE, gamePlayer, player, plugin);
+        this.bossBar = null;
     }
 
     public void updateScoreboard() {
@@ -111,7 +112,8 @@ public class Displayer {
     }
 
     public void removeDisplayInsideClaims() {
-        player.hideBossBar(this.bossBar);
+        if (this.bossBar != null) player.hideBossBar(this.bossBar);
+        this.bossBar = null;
     }
 
     public void displayActionCancelled() {
