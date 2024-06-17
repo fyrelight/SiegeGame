@@ -257,7 +257,7 @@ public class ConfigLoader implements GameConfig {
 
             ItemStack item = new ItemStack(material1, amount);
             ItemMeta meta = item.getItemMeta();
-            meta.displayName(MiniMessage.miniMessage().deserialize(displayName));
+            if (displayName != null) meta.displayName(MiniMessage.miniMessage().deserialize(displayName).decoration(TextDecoration.ITALIC, false));
             meta.lore(lore);
 
             for (String flag : itemFlags) {
