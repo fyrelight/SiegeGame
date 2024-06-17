@@ -13,9 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -44,7 +42,7 @@ public class AbilityItemModule implements Module {
             worldGame.getPlayers().forEach(gamePlayer -> sendBeaconBeam(gamePlayer.getBukkitPlayer(), location.clone()));
 
             Bukkit.broadcast(Component.empty().color(NamedTextColor.LIGHT_PURPLE)
-                    .append(Messages.PREFIX)
+                    .append(Messages.prefix(plugin))
                     .append(Component.text("An "))
                     .append(Component.text("ability item").color(NamedTextColor.YELLOW))
                     .append(Component.text(" has spawned. Follow the beacon beam or go to "))

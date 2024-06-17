@@ -1,22 +1,15 @@
 package me.cedric.siegegame.enums;
 
+import me.cedric.siegegame.SiegeGamePlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.NotNull;
 
 
 public enum Messages implements ComponentLike {
-    PREFIX(Component.text("[ceedric.com] ").color(TextColor.color(247, 80, 30))),
-
-    WELCOME(Component.empty()
-            .append(Component.text("Welcome to ceedric.com Use ").color(NamedTextColor.DARK_AQUA))
-            .append(Component.text("/resources").color(NamedTextColor.GOLD))
-            .append(Component.text(" for gear.").color(NamedTextColor.DARK_AQUA))
-    ),
-
     NOTIFICATION_CLAIMS_ENTERED(Component.text("%s")),
 
     COMMAND_RALLY_SET(Component.text("Rally set.").color(NamedTextColor.GRAY)),
@@ -55,5 +48,19 @@ public enum Messages implements ComponentLike {
     @Override
     public @NotNull Component asComponent() {
         return this.component;
+    }
+
+    public static TextComponent prefix(SiegeGamePlugin plugin) {
+        return Component.text("[")
+                .append(plugin.getGameConfig().getServerName())
+                .append(Component.text("] ")).color(NamedTextColor.YELLOW);
+    }
+
+    public static TextComponent welcome(SiegeGamePlugin plugin) {
+        return Component.text("Welcome to ").color(NamedTextColor.DARK_AQUA)
+                .append(plugin.getGameConfig().getServerName())
+                .append(Component.text(" Use "))
+                .append(Component.text("/resources").color(NamedTextColor.GOLD))
+                .append(Component.text(" for gear."));
     }
 }

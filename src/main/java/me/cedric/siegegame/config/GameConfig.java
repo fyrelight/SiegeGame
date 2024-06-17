@@ -1,5 +1,6 @@
 package me.cedric.siegegame.config;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.EntityType;
 
@@ -32,5 +33,7 @@ public interface GameConfig {
     NamespacedKey getNamespacedMapKey();
 
     NamespacedKey getNamespacedPropertiesKey();
+
+    Component getServerName();
 
 }

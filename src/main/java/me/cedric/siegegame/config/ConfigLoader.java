@@ -121,6 +121,7 @@ public class ConfigLoader implements GameConfig {
     private static final String SUPER_BREAKER_TIMER = "super-breaker-timer";
     private static final String START_GAME_ON_STARTUP = "start-game-on-server-start";
     private static final String SUPER_BREAKER_COOLDOWN = "super-breaker-cooldown";
+    private static final String SERVER_NAME_KEY = "server-name";
 
     private final NamespacedKey namespacedItemKey;
     private final NamespacedKey namespacedMapKey;
@@ -487,6 +488,14 @@ public class ConfigLoader implements GameConfig {
     @Override
     public NamespacedKey getNamespacedPropertiesKey() {
         return this.namespacedPropertiesKey;
+    }
+
+    @Override
+    public Component getServerName() {
+        String serverName = configYml.getString(SERVER_NAME_KEY);
+        if (serverName == null) return Component.empty();
+
+        return MiniMessage.miniMessage().deserialize(serverName);
     }
 }
 

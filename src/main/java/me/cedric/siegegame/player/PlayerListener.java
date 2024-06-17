@@ -115,7 +115,7 @@ public class PlayerListener implements Listener {
         player.setFlying(false);
         player.setAllowFlight(false);
         player.setLevel(0);
-        player.sendMessage(Messages.WELCOME);
+        player.sendMessage(Messages.welcome(plugin));
 
         plugin.getGameManager().getKitStorage().load(player, match == null ? null : match.getWorldGame());
     }
