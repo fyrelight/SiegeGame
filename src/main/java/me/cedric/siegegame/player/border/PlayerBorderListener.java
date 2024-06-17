@@ -29,105 +29,14 @@ public class PlayerBorderListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onJoin(PlayerJoinEvent event) {
-        SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
-
-        if (match == null)
-            return;
-
-        GamePlayer gamePlayer = match.getWorldGame().getPlayer(event.getPlayer().getUniqueId());
-
-        if (gamePlayer == null)
-            return;
-
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerJoin(PlayerJoinEvent event) {
         BorderUpdateTask borderUpdateTask = new BorderUpdateTask(plugin.getGameManager(), event.getPlayer().getUniqueId());
 
-        borderUpdateTask.runTaskTimer(plugin, 0, 100);
-    }
-
-    /*
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onInitialSpawn(PlayerJoinEvent event) {
-        SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
-
-        if (match == null)
-            return;
-
-        GamePlayer gamePlayer = match.getWorldGame().getPlayer(event.getPlayer().getUniqueId());
-
-        if (gamePlayer == null)
-            return;
-
-        if (!shouldCheck(gamePlayer))
-            return;
-
-        PlayerBorderHandler handler = gamePlayer.getBorderHandler();
-
-        Bukkit.getScheduler().runTaskLater(plugin, () -> handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update()), 15);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onTeleport(PlayerTeleportEvent event) {
-        SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
-
-        if (match == null)
-            return;
-
-        GamePlayer gamePlayer = match.getWorldGame().getPlayer(event.getPlayer().getUniqueId());
-
-        if (gamePlayer == null)
-            return;
-
-        if (!shouldCheck(gamePlayer))
-            return;
-
-        PlayerBorderHandler handler = gamePlayer.getBorderHandler();
-
-        Bukkit.getScheduler().runTaskLater(plugin, () -> handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update()), 0);
+        borderUpdateTask.runTaskTimer(plugin, 0, 1);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onTagged(PlayerTagEvent event) {
-        SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
-
-        if (match == null)
-            return;
-
-        GamePlayer gamePlayer = match.getWorldGame().getPlayer(event.getPlayer().getUniqueId());
-
-        if (gamePlayer == null)
-            return;
-
-        if (!shouldCheck(gamePlayer))
-            return;
-
-        PlayerBorderHandler handler = gamePlayer.getBorderHandler();
-
-        handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update());
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onUnTagged(PlayerUntagEvent event) {
-        SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
-
-        if (match == null)
-            return;
-
-        GamePlayer gamePlayer = match.getWorldGame().getPlayer(event.getPlayer().getUniqueId());
-
-        if (gamePlayer == null)
-            return;
-
-        if (!shouldCheck(gamePlayer))
-            return;
-
-        PlayerBorderHandler handler = gamePlayer.getBorderHandler();
-
-        handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update());
-    }*/
-
-    @EventHandler
     public void onMove(PlayerMoveEvent event) {
         SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
 

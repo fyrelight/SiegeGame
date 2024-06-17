@@ -27,8 +27,7 @@ public class TeamBorder extends Border {
     @Override
     public boolean canLeave(GamePlayer gamePlayer) {
         if (team == null) return true;
-        if (!this.team.getPlayers().contains(gamePlayer)) return false;
-        if (combatManager.isInCombat(gamePlayer.getBukkitPlayer())) return false;
-        return this.getBoundingBox().isColliding(gamePlayer.getBukkitPlayer().getLocation());
+        if (!team.equals(gamePlayer.getTeam())) return false;
+        return !combatManager.isInCombat(gamePlayer.getBukkitPlayer());
     }
 }

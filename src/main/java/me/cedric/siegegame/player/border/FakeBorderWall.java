@@ -32,7 +32,7 @@ public class FakeBorderWall implements FakeBorder {
     }
 
     @Override
-    public void update() {
+    public void update(FakeBlockManager fakeBlockManager) {
         Location location = gamePlayer.getBukkitPlayer().getLocation();
         boolean destroy = false;
         boolean update = false;
@@ -49,19 +49,16 @@ public class FakeBorderWall implements FakeBorder {
         }
 
         if (destroy) {
-            //System.out.println("Destroying");
-            destroy();
+            destroy(fakeBlockManager);
             return;
         }
 
         if(update) {
-            //System.out.println("Updating");
-            updateWalls(border.getBoundingBox());
+            updateWalls(fakeBlockManager, border.getBoundingBox());
             return;
         }
 
-        //System.out.println("Creating");
-        create();
+        create(fakeBlockManager);
     }
 
     private boolean shouldDisplay(Border border, Location location) {
@@ -84,17 +81,13 @@ public class FakeBorderWall implements FakeBorder {
         return borderBox.isColliding(location) && !minBox.isColliding(location);
     }
 
-    @Override
-    public void destroy() {
-        FakeBlockManager fakeBlockManager = gamePlayer.getFakeBlockManager();
-        fakeBlockManager.removeAll();
+    public void destroy(FakeBlockManager fakeBlockManager) {
         World world = gamePlayer.getBukkitPlayer().getWorld();
         for (Wall wall : walls) {
             destroyWall(fakeBlockManager,world,wall);
         }
 
         walls.clear();
-        fakeBlockManager.update();
     }
 
     private void destroyWall(FakeBlockManager manager, World world, Wall wall) {
@@ -108,19 +101,17 @@ public class FakeBorderWall implements FakeBorder {
     }
 
 
-    private void updateWalls(BoundingBox borderBox) {
+    private void updateWalls(FakeBlockManager fakeBlockManager, BoundingBox borderBox) {
         WallProjection wallProjection = projectXZ(borderBox, gamePlayer.getBukkitPlayer().getLocation());
         List<Wall> oldWalls = new ArrayList<>(walls);
         walls.clear();
-        //System.out.println("------ CREATING WALLS --------");
         createWall(borderBox, wallProjection.XZ, wallProjection.perpendicular, wallProjection.Y, wallProjection.xDimension,0, width,wallProjection.facingPositive);
-        buildUpdate(oldWalls,walls);
+        buildUpdate(fakeBlockManager, oldWalls, walls);
     }
 
-    private void buildUpdate(List<Wall> oldWalls, List<Wall> newWalls) {
+    private void buildUpdate(FakeBlockManager manager, List<Wall> oldWalls, List<Wall> newWalls) {
         //new walls
         World world = gamePlayer.getBukkitPlayer().getWorld();
-        FakeBlockManager manager = gamePlayer.getFakeBlockManager();
         for(Wall newWall : newWalls) {
             //find the old wall
             Wall oldWall = getEquivalentWall(oldWalls,newWall);
@@ -152,24 +143,20 @@ public class FakeBorderWall implements FakeBorder {
         return null;
     }
 
-    public void create() {
+    public void create(FakeBlockManager fakeBlockManager) {
         WallProjection wallProjection = projectXZ(border.getBoundingBox(), gamePlayer.getBukkitPlayer().getLocation());
 
         walls.clear();
         createWall(border.getBoundingBox(), wallProjection.XZ, wallProjection.perpendicular, wallProjection.Y, wallProjection.xDimension, 0, width,wallProjection.facingPositive);
-        buildWalls();
+        buildWalls(fakeBlockManager);
     }
 
 
-    protected void buildWalls() {
-        FakeBlockManager fakeBlockManager = gamePlayer.getFakeBlockManager();
-        fakeBlockManager.removeAll();
+    protected void buildWalls(FakeBlockManager fakeBlockManager) {
         World world = gamePlayer.getBukkitPlayer().getWorld();
         for (Wall wall : walls) {
             createWall(fakeBlockManager,world,wall);
         }
-
-        fakeBlockManager.update();
     }
 
     protected void createWall(FakeBlockManager manager, World world , Wall wall) {

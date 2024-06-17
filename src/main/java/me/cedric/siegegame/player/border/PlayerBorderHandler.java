@@ -33,7 +33,7 @@ public class PlayerBorderHandler {
     }
 
     public void addSafeZone(Team team) {
-        borders.put(team.getSafeArea(), new FakeBorderSafeZone(player, team));
+        borders.put(team.getSafeArea(), new FakeBorderBox(player, team));
     }
 
     public Set<Border> getBorders() {

@@ -7,23 +7,20 @@ import org.bukkit.Material;
 
 
 public class ColorUtil {
-    public static TeamColor getRelationalColor(Team one, Team two) {
-        if (one == null || two == null)
-            return NamedTeamColor.WHITE;
+    public static TeamColor getRelationalColor(Team team, Team other) {
+        if (team == null) return other.getColor();
+        if (other == null) return NamedTeamColor.WHITE;
 
-        if (!one.getWorldGame().equals(two.getWorldGame()))
-            return NamedTeamColor.WHITE;
+        WorldGame worldGame = team.getWorldGame();
 
-        if (one.equals(two))
-            return NamedTeamColor.CYAN;
-
-        WorldGame worldGame = one.getWorldGame();
+        if (!worldGame.equals(other.getWorldGame())) return other.getColor();
 
         if (worldGame.getTeams().size() == 2) {
+            if (team.equals(other)) return NamedTeamColor.CYAN;
             return NamedTeamColor.RED;
         }
 
-        return two.getColor();
+        return other.getColor();
     }
 
     public static Material getRelationalWool(Team one, Team two) {

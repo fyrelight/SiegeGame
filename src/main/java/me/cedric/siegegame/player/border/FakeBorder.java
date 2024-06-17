@@ -1,10 +1,10 @@
 package me.cedric.siegegame.player.border;
 
 
+import me.cedric.siegegame.fake.FakeBlockManager;
 
 public interface FakeBorder {
-    void update();
-    void destroy();
+    void update(FakeBlockManager manager);
     Border getBorder();
     final class WallProjection {
         final int XZ;
@@ -39,6 +39,42 @@ public interface FakeBorder {
 
         public boolean isFacingPositive() {
             return facingPositive;
+        }
+    }
+
+    final class Floor {
+        final int minX;
+        final int maxX;
+        final int minZ;
+        final int maxZ;
+        final int y;
+
+        Floor(int minX, int maxX, int minZ, int maxZ, int y) {
+            this.minX = minX;
+            this.maxX = maxX;
+            this.minZ = minZ;
+            this.maxZ = maxZ;
+            this.y = y;
+        }
+
+        public int getMinX() {
+            return minX;
+        }
+
+        public int getMaxX() {
+            return maxX;
+        }
+
+        public int getMinZ() {
+            return minZ;
+        }
+
+        public int getMaxZ() {
+            return maxZ;
+        }
+
+        public int getY() {
+            return y;
         }
     }
 
@@ -81,42 +117,6 @@ public interface FakeBorder {
 
         public int getMaxY() {
             return maxY;
-        }
-    }
-
-    final class Floor {
-        final int minX;
-        final int maxX;
-        final int minZ;
-        final int maxZ;
-        final int y;
-
-        Floor(int minX, int maxX, int minZ, int maxZ, int y) {
-            this.minX = minX;
-            this.maxX = maxX;
-            this.minZ = minZ;
-            this.maxZ = maxZ;
-            this.y = y;
-        }
-
-        public int getMinX() {
-            return minX;
-        }
-
-        public int getMaxX() {
-            return maxX;
-        }
-
-        public int getMinZ() {
-            return minZ;
-        }
-
-        public int getMaxZ() {
-            return maxZ;
-        }
-
-        public int getY() {
-            return y;
         }
     }
 

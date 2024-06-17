@@ -2,6 +2,7 @@ package me.cedric.siegegame.player.border;
 
 import me.cedric.siegegame.SiegeGamePlugin;
 import me.cedric.siegegame.enums.Permissions;
+import me.cedric.siegegame.fake.FakeBlockManager;
 import me.cedric.siegegame.model.GameManager;
 import me.cedric.siegegame.model.SiegeGameMatch;
 import me.cedric.siegegame.player.GamePlayer;
@@ -49,6 +50,9 @@ public class BorderUpdateTask extends BukkitRunnable {
 
         PlayerBorderHandler handler = gamePlayer.getBorderHandler();
 
-        handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update());
+        FakeBlockManager fakeBlockManager = gamePlayer.getFakeBlockManager();
+        handler.getBorders().forEach(border -> handler.getBorderDisplay(border).update(fakeBlockManager));
+        fakeBlockManager.setAllVisible(true);
+        fakeBlockManager.update();
     }
 }
