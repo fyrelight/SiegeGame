@@ -19,6 +19,7 @@ import me.cedric.siegegame.model.teams.TeamFactory;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 
@@ -246,7 +247,7 @@ public class ConfigLoader implements GameConfig {
 
             List<Component> lore = new ArrayList<>();
             for (String s : listOfLore)
-                lore.add(MiniMessage.miniMessage().deserialize(s));
+                lore.add(MiniMessage.miniMessage().deserialize(s).decoration(TextDecoration.ITALIC, false));
 
             if (material == null) continue;
             Material material1 = Material.matchMaterial(material);
