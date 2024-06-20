@@ -56,7 +56,7 @@ public class PlayerBorderListener implements Listener {
         if (gameMatch == null)
             return;
 
-        if (!gameMatch.getWorld().equals(gamePlayer.getBukkitPlayer().getWorld()))
+        if (!gamePlayer.getBukkitPlayer().getWorld().equals(gameMatch.getWorld()))
             return;
 
         PlayerBorderHandler handler = gamePlayer.getBorderHandler();
