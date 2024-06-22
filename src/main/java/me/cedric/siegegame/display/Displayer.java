@@ -14,8 +14,11 @@ import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 
 public class Displayer {
     private static final Component TITLE = Component.text("Sieges").decorate(TextDecoration.BOLD).color(NamedTextColor.DARK_AQUA);
@@ -23,13 +26,25 @@ public class Displayer {
     private final SiegeGamePlugin plugin;
     private final GamePlayer gamePlayer;
     private final Player player;
+    private ScoreboardWrapper scoreboard;
     private BossBar bossBar;
 
     public Displayer(SiegeGamePlugin plugin, GamePlayer gamePlayer) {
         this.plugin = plugin;
         this.gamePlayer = gamePlayer;
         this.player = gamePlayer.getBukkitPlayer();
+        this.scoreboard = null;
         this.bossBar = null;
+    }
+
+    public void setScoreboard(ScoreboardWrapper scoreboard) {
+        this.scoreboard = scoreboard;
+        scoreboard.addPlayer(this.player);
+    }
+
+    public void removeScoreboard() {
+        this.scoreboard = null;
+        this.player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
     }
 
     public void displayKill(GamePlayer dead, GamePlayer killerGamePlayer) {

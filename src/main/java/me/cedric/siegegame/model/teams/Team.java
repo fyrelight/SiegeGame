@@ -61,7 +61,7 @@ public class Team {
 
     public void addPlayer(GamePlayer player) {
         players.add(player);
-        this.scoreboard.addPlayer(player);
+        player.getDisplayer().setScoreboard(this.scoreboard);
         player.setTeam(this);
     }
 
