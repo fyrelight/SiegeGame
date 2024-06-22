@@ -7,6 +7,7 @@ maps:
     # The plugin will copy the world folder with this name and start the game there
     worldname: 'atiermap'
     # Display name. Currently only used in the scoreboard
+    # MiniMessage format
     world-display-name: 'S TIER MAP'
     # Default spawn. This is a failsafe in case something goes wrong with team spawns
     # May be used for spectators in the future
@@ -31,6 +32,7 @@ maps:
       gaiarands:
         # Display name
         # Currently only used in the scoreboard
+        # MiniMessage format
         name: 'Gaia Randos'
         # Team's color. If there are more than 2 teams, the plugin will use this color
         # instead of red and blue. Keep in mind having more than 2 teams has not been tested
