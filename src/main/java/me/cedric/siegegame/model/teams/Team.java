@@ -1,7 +1,9 @@
 package me.cedric.siegegame.model.teams;
 
 import com.google.common.collect.ImmutableSet;
+import me.cedric.siegegame.SiegeGamePlugin;
 import me.cedric.siegegame.display.TeamColor;
+import me.cedric.siegegame.display.TeamScoreboard;
 import me.cedric.siegegame.player.border.Border;
 import me.cedric.siegegame.player.GamePlayer;
 import me.cedric.siegegame.model.teams.territory.Territory;
@@ -9,12 +11,13 @@ import me.cedric.siegegame.model.game.WorldGame;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 public class Team {
-
+    private final SiegeGamePlugin plugin;
     private final WorldGame worldGame;
     private final Set<GamePlayer> players = new HashSet<>();
     private final TeamFactory factory;
@@ -25,8 +28,10 @@ public class Team {
     private String identifier;
     private Component name;
     private TeamColor color;
+    private TeamScoreboard scoreboard = null;
 
-    public Team(WorldGame worldGame, TeamFactory factory) {
+    public Team(SiegeGamePlugin plugin, WorldGame worldGame, TeamFactory factory) {
+        this.plugin = plugin;
         this.factory = factory;
         this.worldGame = worldGame;
         this.safeArea = factory.getSafeArea();
@@ -36,6 +41,14 @@ public class Team {
         this.safeSpawn = factory.getSafeSpawn();
         this.territory = factory.getTerritory();
         factory.getSafeArea().setTeam(this);
+    }
+
+    public void addScoreboard() {
+        this.scoreboard = new TeamScoreboard(this.plugin, this, this.worldGame);
+    }
+
+    public void updateScoreboard() {
+        this.scoreboard.update();
     }
 
     public ImmutableSet<GamePlayer> getPlayers() {
@@ -48,6 +61,7 @@ public class Team {
 
     public void addPlayer(GamePlayer player) {
         players.add(player);
+        this.scoreboard.addPlayer(player);
         player.setTeam(this);
     }
 
@@ -62,6 +76,8 @@ public class Team {
         identifier = factory.getConfigKey();
         name = factory.getName();
         color = factory.getColor();
+        scoreboard.removeAllLines();
+        scoreboard = null;
         points = 0;
     }
 

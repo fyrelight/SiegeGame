@@ -8,6 +8,8 @@ import me.cedric.siegegame.util.RandomString;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import java.util.Collection;
+
 public class SiegeGameMatch {
 
     private final SiegeGamePlugin plugin;
@@ -42,7 +44,10 @@ public class SiegeGameMatch {
         if (!gameMap.isWorldLoaded())
             gameMap.load();
 
-        for (Team team : worldGame.getTeams()) {
+        Collection<Team> teams = worldGame.getTeams();
+
+        for (Team team : teams) {
+            team.addScoreboard();
             Location safeSpawn = team.getSafeSpawn();
             safeSpawn.setWorld(gameMap.getWorld());
             team.setSafeSpawn(safeSpawn);

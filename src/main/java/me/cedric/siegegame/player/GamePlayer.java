@@ -81,7 +81,6 @@ public class GamePlayer {
         getBukkitPlayer().getInventory().clear();
         getBukkitPlayer().getEnderChest().clear();
         grantNightVision();
-        getDisplayer().wipeScoreboard();
         getDisplayer().removeDisplayInsideClaims();
     }
 }

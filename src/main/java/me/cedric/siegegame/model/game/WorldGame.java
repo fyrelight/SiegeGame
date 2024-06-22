@@ -128,8 +128,8 @@ public class WorldGame {
     }
 
     public void updateAllScoreboards() {
-        for (GamePlayer gamePlayer : playerManager.getPlayers()) {
-            gamePlayer.getDisplayer().updateScoreboard();
+        for (Team team : this.getTeams()) {
+            team.updateScoreboard();
         }
     }
 

@@ -23,33 +23,13 @@ public class Displayer {
     private final SiegeGamePlugin plugin;
     private final GamePlayer gamePlayer;
     private final Player player;
-    private PlayerScoreboard scoreboard;
     private BossBar bossBar;
 
     public Displayer(SiegeGamePlugin plugin, GamePlayer gamePlayer) {
         this.plugin = plugin;
         this.gamePlayer = gamePlayer;
         this.player = gamePlayer.getBukkitPlayer();
-        this.scoreboard = new PlayerScoreboard(TITLE, gamePlayer, player, plugin);
         this.bossBar = null;
-    }
-
-    public void updateScoreboard() {
-        if (player == null)
-            return;
-
-        SiegeGameMatch match = plugin.getGameManager().getCurrentMatch();
-
-        if (match == null)
-            return;
-
-        this.scoreboard.setScores(match.getWorldGame());
-        this.scoreboard.setMap(match.getGameMap().getDisplayName().color(NamedTextColor.GRAY));
-        this.scoreboard.setServer(plugin.getGameConfig().getServerName());
-    }
-
-    public void wipeScoreboard() {
-        this.scoreboard = new PlayerScoreboard(TITLE, gamePlayer, player, plugin);
     }
 
     public void displayKill(GamePlayer dead, GamePlayer killerGamePlayer) {

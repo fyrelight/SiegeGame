@@ -105,7 +105,6 @@ public class PlayerListener implements Listener {
 
             if (gamePlayer.hasTeam()) {
                 player.teleport(gamePlayer.getTeam().getSafeSpawn());
-                gamePlayer.getDisplayer().updateScoreboard();
             }
 
             gamePlayer.grantNightVision();

@@ -218,7 +218,7 @@ public class ConfigLoader implements GameConfig {
 
         List<TeamFactory> factories = loadTeams(worldGame, gameMap, teamsSection);
         factories.forEach(gameMap::addTeam);
-        factories.forEach(teamFactory -> worldGame.addTeam(new Team(worldGame, teamFactory)));
+        factories.forEach(teamFactory -> worldGame.addTeam(new Team(plugin, worldGame, teamFactory)));
 
         plugin.getGameManager().addGame(new SiegeGameMatch(plugin, worldGame, gameMap));
     }
