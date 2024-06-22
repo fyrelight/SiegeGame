@@ -92,7 +92,7 @@ public class ScoreboardWrapper {
     }
 
     public void removeLine(int line) {
-        Team team = this.teams.remove(line);
+        Team team = this.teams.get(line);
         if (team == null) return;
 
         team.removeEntry(ChatColor.values()[line].toString());
